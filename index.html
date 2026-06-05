@@ -3,549 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>勤怠 & 工賃アプリ 🐾</title>
+<title>勤怠 & 工賃アプリ 🐾 V21</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
-  background: #fbf8f3;
-  color: #2c1d11;
-  min-height: 100vh;
-  padding: 1rem;
-  font-size: 16px;
-}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #fbf8f3; color: #2c1d11; min-height: 100vh; padding: 1rem; font-size: 20px; }
 .container { max-width: 480px; margin: 0 auto; padding: 1rem 0; }
-.card {
-  background: #fff;
-  border: 1px solid #eaddca;
-  border-radius: 16px;
-  padding: 1.4rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(139,94,60,0.05);
-}
-.sec-label { font-size: 15px; color: #5c4033; font-weight: bold; margin: 0 0 14px; display: block; }
-label { font-size: 15px; color: #5c4033; font-weight: bold; margin: 0 0 8px; display: block; }
+.card { background: #fff; border: 1px solid #eaddca; border-radius: 16px; padding: 1.4rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(139,94,60,0.05); }
+.sec-label { font-size: 20px; color: #5c4033; font-weight: bold; margin: 0 0 14px; display: block; }
+label { font-size: 20px; color: #5c4033; font-weight: bold; margin: 0 0 8px; display: block; }
+
+/* ボタン */
+.btn { width: 100%; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.15s; border: none; }
+.btn-open  { background: #0052cc; }
+.btn-open:hover  { background: #003fa3; }
+.btn-close { background: #d32f2f; }
+.btn-close:hover { background: #b32424; }
+.btn:disabled { background: #ccc; cursor: default; opacity: 0.7; }
+.register-btn { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #1a4008; background: #2e7d0e; color: #ffffff; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 0.03em; }
+.register-btn:disabled { background: #ccc; border-color: #bbb; cursor: default; }
+.back-btn { display: block; width: 100%; padding: 14px; margin-bottom: 0.3rem; border-radius: 12px; border: 1px solid #eaddca; background: #fff; color: #5c4033; font-size: 15px; font-weight: bold; cursor: pointer; }
+.meet-btn { display: block; text-align: center; padding: 18px; background: #E6F1FB; color: #0C447C; border-radius: 16px; border: 2px solid #B5D4F4; font-weight: bold; font-size: 20px; margin-bottom: 1rem; text-decoration: none; }
+.meet-btn:hover { background: #B5D4F4; }
+.reset-btn { font-size: 12px; padding: 6px 12px; border-radius: 8px; border: 1px solid #eaddca; background: #fff; color: #7c5a43; cursor: pointer; }
+
+/* Meet */
+
+/* グリッド */
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .metric { background: #f7f0e8; border-radius: 10px; padding: 12px; }
-.metric-label { font-size: 12px; color: #7c5a43; margin: 0 0 3px; font-weight: bold; }
-.metric-value { font-size: 16px; font-weight: bold; color: #2c1d11; margin: 0; word-break: break-all; }
-.stamp-block { background: #f7f0e8; border-radius: 10px; padding: 14px; border: 1px solid #eaddca; min-width: 0; }
-.stamp-time { font-size: 26px; font-weight: bold; color: #d35400; margin: 0 0 10px; letter-spacing: 0.02em; }
-.btn {
-  width: 100%; padding: 13px;
-  border-radius: 10px;
-  border: 1px solid #d35400;
-  background: #ff9f43;
-  color: #fff;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn:hover { background: #e67e22; }
-.btn:disabled { background: #ccc; border-color: #bbb; cursor: default; opacity: 0.7; }
-.btn-small {
-  padding: 8px 16px; border-radius: 8px;
-  border: 1px solid #d35400; background: #fff;
-  color: #d35400; font-size: 13px; font-weight: bold; cursor: pointer; white-space: nowrap;
-}
-.btn-small:hover { background: #fff3e8; }
-.meet-btn {
-  display: block; text-align: center;
-  padding: 16px;
-  background: #E6F1FB;
-  color: #0C447C;
-  border-radius: 12px;
-  border: 1px solid #B5D4F4;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 1rem;
-}
-.meet-btn:hover { background: #B5D4F4; }
-.work-total {
-  margin-top: 12px; text-align: center;
-  padding: 12px; background: #f7f0e8;
-  border-radius: 10px; border: 1px dashed #ff9f43;
-}
-.day-row { display: flex; align-items: center; gap: 16px; }
-.day-btn {
-  width: 52px; height: 52px; border-radius: 50%;
-  border: 1px solid #eaddca; background: #fff;
-  color: #ff9f43; font-size: 24px; font-weight: bold; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.seikinn-box { margin-top: 12px; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; }
-.seikinn-success { background: #EAF3DE; color: #27500A; border: 1px solid #c2e29c; }
-.seikinn-warning { background: #FAEEDA; color: #633806; border: 1px solid #f3d5a2; }
-input[type="number"], textarea, input[type="text"] {
-  width: 100%; padding: 12px 14px; border: 1px solid #eaddca; border-radius: 10px;
-  font-size: 16px; background: #fff; color: #2c1d11; font-family: inherit;
-}
-input[type="number"] { margin-bottom: 12px; }
-textarea { height: 80px; resize: none; margin-bottom: 0; }
+.metric-label { font-size: 16px; color: #7c5a43; margin: 0 0 3px; font-weight: bold; }
+.metric-value { font-size: 20px; font-weight: bold; color: #2c1d11; margin: 0; }
+
+/* 打刻 */
+.stamp-block { background: #f7f0e8; border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #eaddca; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
+.stamp-time { font-size: 36px; font-weight: bold; color: #d35400; margin: 0 0 10px; letter-spacing: 0.02em; }
+.work-total { margin-top: 12px; text-align: center; padding: 12px; background: #f7f0e8; border-radius: 10px; border: 1px dashed #ff9f43; }
+
+/* 体調・選択 */
 .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-.choice-btn {
-  padding: 14px 10px; border-radius: 10px; border: 1px solid #eaddca;
-  background: #f7f0e8; color: #5c4033; font-weight: bold; cursor: pointer;
-  text-align: center; font-size: 16px; transition: background 0.15s;
-}
+.choice-btn { padding: 14px 10px; border-radius: 10px; border: 1px solid #eaddca; background: #f7f0e8; color: #5c4033; font-weight: bold; cursor: pointer; text-align: center; font-size: 22px; }
 .choice-btn.active { background: #ff9f43; color: #fff; border-color: #d35400; }
-/* 体調ボタン大きめ */
-.taichou-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
-.taichou-btn {
-  padding: 18px 10px; border-radius: 12px; border: 2px solid #eaddca;
-  background: #f7f0e8; font-size: 28px; cursor: pointer; text-align: center;
-  transition: background 0.15s;
-}
-.taichou-btn.active-good { background: #EAF3DE; border-color: #7acc55; }
-.taichou-btn.active-bad  { background: #FCEBEB; border-color: #e24b4a; }
+
+/* 通所日数 */
+.day-row { display: flex; align-items: center; gap: 16px; }
+.day-btn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #eaddca; background: #fff; color: #ff9f43; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.seikinn-box { margin-top: 12px; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; }
+.seikinn-success { background: #EAF3DE; color: #1a4008; border: 1px solid #c2e29c; }
+.seikinn-warning { background: #FAEEDA; color: #633806; border: 1px solid #f3d5a2; }
+
+/* 工賃 */
 .total-box { background: #ffecd9; border-radius: 12px; padding: 14px; text-align: center; border: 2px solid #ff9f43; }
 .total-label { font-size: 14px; color: #d35400; margin: 0 0 4px; font-weight: bold; }
 .total-value { font-size: 28px; font-weight: bold; color: #d35400; margin: 0; }
-.reset-btn { font-size: 12px; padding: 6px 12px; border-radius: 8px; border: 1px solid #eaddca; background: #fff; color: #7c5a43; cursor: pointer; }
-.saved-badge {
-  display: inline-block; font-size: 12px; color: #3B6D11; background: #EAF3DE;
-  border: 1px solid #c2e29c; border-radius: 6px; padding: 2px 8px; margin-left: 8px;
-  opacity: 0; transition: opacity 0.3s;
-}
-.saved-badge.show { opacity: 1; }
-.history-list { list-style: none; padding: 0; margin-top: 8px; }
-.history-list li {
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-  font-size: 14px; color: #5c4033; padding: 7px 0;
-  border-bottom: 1px dashed #eaddca;
-}
-.history-list li:last-child { border-bottom: none; }
-.history-del { font-size: 12px; color: #d35400; background: none; border: none; cursor: pointer; padding: 4px 8px; }
-.food-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.food-row input[type="number"] { margin-bottom: 0; flex: 1; min-width: 80px; }
-.food-unit { font-size: 15px; color: #5c4033; white-space: nowrap; }
 
-@media (max-width: 400px) {
-  .grid2.stamp-grid { grid-template-columns: 1fr; }
-  .stamp-time { font-size: 32px; }
-}
-@media (max-width: 360px) {
-  body { padding: 0.5rem; font-size: 15px; }
-  .card { padding: 1rem; }
-  .total-value { font-size: 24px; }
-  .meet-btn { font-size: 14px; padding: 13px; }
-}
+/* 入力 */
+input[type="number"], textarea, input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #eaddca; border-radius: 10px; font-size: 20px; background: #fff; color: #2c1d11; font-family: inherit; margin-bottom: 12px; }
+textarea { height: 80px; resize: none; }
+input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f43; }
+
+/* 肉球アニメ */
+.paw-stamp-area { text-align: center; font-size: 28px; margin-top: 6px; min-height: 36px; }
+@keyframes jump { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.jumping-paw { display: inline-block; animation: jump 0.6s ease infinite; }
+.jumping-paw:nth-child(2){animation-delay:.1s} .jumping-paw:nth-child(3){animation-delay:.2s}
+.jumping-paw:nth-child(4){animation-delay:.3s} .jumping-paw:nth-child(5){animation-delay:.4s}
+
+/* ダークモード */
 @media (prefers-color-scheme: dark) {
   body { background: #1e1814; color: #f5ebe6; }
   .card { background: #2d241e; border-color: #4a3b31; }
   .sec-label, label { color: #ffecd9; }
-  .metric, .stamp-block, .work-total, .choice-btn, .taichou-btn { background: #3a2e26; border-color: #4a3b31; color: #f5ebe6; }
+  .metric, .stamp-block, .work-total, .choice-btn { background: #3a2e26; border-color: #4a3b31; color: #f5ebe6; }
   .choice-btn.active { background: #ff9f43; color: #fff; }
-  .taichou-btn.active-good { background: #1e3a14; border-color: #7acc55; }
-  .taichou-btn.active-bad  { background: #3a1414; border-color: #e24b4a; }
   .metric-label { color: #d2b48c; } .metric-value { color: #f5ebe6; }
   .day-btn { background: #3a2e26; border-color: #4a3b31; color: #ff9f43; }
-  input[type="number"], textarea, input[type="text"] { background: #3a2e26; color: #f5ebe6; border-color: #4a3b31; }
-  .reset-btn, .btn-small { background: #3a2e26; color: #d2b48c; border-color: #4a3b31; }
-  .btn-small { color: #ff9f43; }
-  .history-list li { color: #d2b48c; border-bottom-color: #4a3b31; }
-  .food-unit { color: #d2b48c; }
-  .stamp-alert { background: #3a2a10 !important; border-color: #7a5120 !important; }
-  .stamp-alert p { color: #fbbf77 !important; }
-  .stamp-alert i { color: #f59e0b !important; }
+  input[type="number"], textarea, input[type="password"] { background: #3a2e26; color: #f5ebe6; border-color: #4a3b31; }
+  .reset-btn, .back-btn { background: #3a2e26; color: #d2b48c; border-color: #4a3b31; }
 }
+
+/* ロック画面 */
+#lock-screen { position: fixed; inset: 0; background: #fbf8f3; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
 </style>
 </head>
 <body>
 
-<!-- パスワード画面 -->
-<div id="lock-screen" style="position:fixed;inset:0;background:#fbf8f3;display:flex;align-items:center;justify-content:center;z-index:9999;padding:1rem;">
-  <div style="background:#fff;border:1px solid #eaddca;border-radius:20px;padding:2rem 1.5rem;max-width:320px;width:100%;text-align:center;box-shadow:0 4px 20px rgba(139,94,60,0.1);">
-    <p style="font-size:44px;margin:0 0 10px;">🐾</p>
-    <p style="font-size:19px;font-weight:bold;color:#ff9f43;margin:0 0 4px;">ワンダーワークIT池下</p>
-    <p style="font-size:14px;color:#ba9b85;font-weight:bold;margin:0 0 24px;">パスワードを入力してにゃ</p>
-    <input type="password" id="pw-input" maxlength="10" placeholder="パスワード"
-      style="width:100%;padding:16px;font-size:24px;text-align:center;border:2px solid #eaddca;border-radius:12px;letter-spacing:10px;margin-bottom:10px;font-family:inherit;"
-      oninput="checkPw(false)" onkeydown="if(event.key==='Enter')checkPw(true)">
-    <p id="pw-error" style="font-size:13px;color:#d35400;min-height:18px;margin:0 0 12px;font-weight:bold;"></p>
-    <button onclick="checkPw(true)" style="width:100%;padding:15px;background:#ff9f43;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;">ログインにゃ 🐾</button>
+<!-- ロック画面 -->
+<div id="lock-screen">
+  <div class="card" style="max-width:320px; width:100%; text-align:center;">
+    <p style="font-size:48px; margin:0 0 10px;">🐾</p>
+    <p style="font-size:19px; font-weight:bold; color:#ff9f43; margin:0 0 4px;">ワンダーワークIT池下</p>
+    <p style="font-size:14px; color:#ba9b85; font-weight:bold; margin:0 0 20px;">合言葉を入れてにゃ</p>
+    <input type="password" id="pw-input" maxlength="5" placeholder="● ● ● ● ●"
+      style="text-align:center; font-size:28px; letter-spacing:12px;"
+      oninput="checkPw()" onkeydown="if(event.key==='Enter')checkPw()">
+    <p id="pw-error" style="font-size:13px; color:#d35400; min-height:18px; margin:4px 0 0; font-weight:bold;"></p>
   </div>
 </div>
 
 <div id="app" style="display:none;">
 <div class="container">
 
-  <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
-    <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加するにゃ！🐾
-  </a>
 
-  <!-- ヘッダー -->
-  <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span style="font-size:19px; font-weight:bold; color:#ff9f43;"><i class="ti ti-paw"></i> 勤怠 &amp; 工賃 🐾</span>
-      <span style="font-size:14px; color:#ba9b85; font-weight:bold;" id="today-label"></span>
+  <!-- ===== 画面A: メイン ===== -->
+  <div id="view-main">
+
+    <!-- Meet -->
+    <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
+      <i class="ti ti-video" style="margin-right:8px;"></i>Google Meetに参加するにゃ！🐾
+    </a>
+
+    <!-- ヘッダー -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; min-height:64px;">
+        <span style="font-size:19px; font-weight:bold; color:#ff9f43;"><i class="ti ti-paw"></i> 勤怠打刻 🐾</span>
+        <span style="font-size:32px; color:#d35400; font-weight:bold; display:flex; align-items:center;" id="today-label"></span>
+      </div>
+      <p style="font-size:13px; color:#ba9b85; margin:4px 0 0; font-weight:bold;">ワンダーワークIT池下</p>
     </div>
-    <p style="font-size:14px; color:#ba9b85; margin:4px 0 0; font-weight:bold;">ワンダーワークIT池下</p>
-  </div>
 
-  <!-- 体調 -->
-  <div class="card">
-    <p class="sec-label"><i class="ti ti-heart"></i> 今日の体調</p>
-    <div class="taichou-grid">
-      <div class="taichou-btn" id="tc-good" onclick="setTaichou('good')">😊<br><span style="font-size:15px;font-weight:bold;">よい ○</span></div>
-      <div class="taichou-btn" id="tc-bad"  onclick="setTaichou('bad')">😔<br><span style="font-size:15px;font-weight:bold;">わるい ×</span></div>
+    <!-- 体調 -->
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-mood-smile"></i> 今日の体調は？</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:4px;">
+        <div class="choice-btn" id="mood-good" onclick="setChoice('mood','good')" style="font-size:22px;">😊 ○</div>
+        <div class="choice-btn" id="mood-bad"  onclick="setChoice('mood','bad')"  style="font-size:22px;">😔 ×</div>
+        <div class="choice-btn" id="mood-mid"  onclick="setChoice('mood','mid')"  style="font-size:22px;">😐 ―</div>
+      </div>
     </div>
-  </div>
 
-  <!-- 打刻 -->
-  <div class="card">
-    <p class="sec-label"><i class="ti ti-cat"></i> 時刻打刻（マーニャ時計）</p>
-    <div class="grid2 stamp-grid">
-      <div class="stamp-block">
-        <p style="font-size:16px; color:#7c5a43; margin:0 0 8px; font-weight:bold;">開始時刻 🐾</p>
-        <p class="stamp-time" id="start-disp">--:--</p>
-        <button class="btn" id="btn-start" onclick="stamp('start')">打刻にゃ</button>
-        <div class="stamp-alert" style="display:flex;align-items:center;gap:4px;margin-top:8px;padding:7px 8px;background:#fef3e2;border:1px solid #f3c87a;border-radius:8px;">
-          <i class="ti ti-alert-triangle" style="font-size:16px;color:#b45309;flex-shrink:0;"></i>
-          <p style="font-size:12px;color:#92400e;margin:0;line-height:1.4;font-weight:bold;">打刻後は変更できません</p>
+    <!-- 打刻 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <p class="sec-label" style="margin:0;"><i class="ti ti-clock"></i> 時刻打刻</p>
+        <button class="reset-btn" onclick="forceClear()">最初から直す</button>
+      </div>
+      <div class="grid2">
+        <div class="stamp-block">
+          <p style="font-size:20px; color:#0052cc; font-weight:bold; margin:0 0 6px;">開始時刻</p>
+          <p class="stamp-time" id="start-disp">--:--</p>
+          <button class="btn btn-open" id="start-btn" onclick="stamp('start')">開始時刻を打刻</button>
+        </div>
+        <div class="stamp-block">
+          <p style="font-size:20px; color:#d32f2f; font-weight:bold; margin:0 0 6px;">終業時刻</p>
+          <p class="stamp-time" id="end-disp">--:--</p>
+          <button class="btn btn-close" id="end-btn" onclick="stamp('end')">終業時間を打刻</button>
         </div>
       </div>
-      <div class="stamp-block">
-        <p style="font-size:16px; color:#7c5a43; margin:0 0 8px; font-weight:bold;">終了時刻 🐾</p>
-        <p class="stamp-time" id="end-disp">--:--</p>
-        <button class="btn" id="btn-end" onclick="stamp('end')">打刻にゃ</button>
-        <div class="stamp-alert" style="display:flex;align-items:center;gap:4px;margin-top:8px;padding:7px 8px;background:#fef3e2;border:1px solid #f3c87a;border-radius:8px;">
-          <i class="ti ti-alert-triangle" style="font-size:16px;color:#b45309;flex-shrink:0;"></i>
-          <p style="font-size:12px;color:#92400e;margin:0;line-height:1.4;font-weight:bold;">打刻後は変更できません</p>
+      <p style="font-size:11px; color:#ba9b85; margin-top:8px; text-align:center; font-weight:bold;">※打刻後は変更できません</p>
+      <div class="work-total">
+        <p style="font-size:12px; color:#7c5a43; margin:0 0 2px; font-weight:bold;">今日の勤務時間</p>
+        <p style="font-size:22px; font-weight:bold; color:#d35400;" id="work-hours">-- 時間 -- 分</p>
+      </div>
+    </div>
+
+    <!-- 登録ボタン -->
+    <div style="text-align:center; margin-bottom:0;">
+      <button class="register-btn" id="reg-btn" onclick="submitToday()" disabled>
+        <i class="ti ti-paw"></i> 今日のデータを登録するにゃ！ 🐾
+      </button>
+      <div class="paw-stamp-area" id="paw-area"></div>
+    </div>
+
+    <!-- サブ画面へ -->
+    <button class="back-btn" onclick="switchView('sub')">
+      <i class="ti ti-database" style="margin-right:6px;"></i>📊 過去履歴・連絡ノート・工賃計算を見る 🐾
+    </button>
+
+  </div>
+
+  <!-- ===== 画面B: サブ ===== -->
+  <div id="view-sub" style="display:none;">
+
+    <button onclick="switchView('main')" style="display:block; width:100%; padding:18px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:20px; margin-bottom:0.3rem; cursor:pointer;">
+      <i class="ti ti-arrow-left" style="margin-right:6px;"></i>🚪 タイムカード画面に戻るにゃ
+    </button>
+
+    <!-- 連絡ノート -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <p class="sec-label" style="margin:0;"><i class="ti ti-notebook"></i> 業務連絡ノート</p>
+        <span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span>
+      </div>
+      <label>小川さんからの申し伝え</label>
+      <textarea id="memo" placeholder="例：今日は集中して作業できました！" oninput="saveMemo()"></textarea>
+      <label>職員からの伝言</label>
+      <textarea id="staff-memo" placeholder="職員さんが記入するエリアにゃ" oninput="saveField('staff_memo', this.value)"></textarea>
+      <label>お休みメモ</label>
+      <textarea id="schedule-memo" placeholder="お休みの予定など" oninput="saveField('schedule_memo', this.value)" style="margin-bottom:0;"></textarea>
+    </div>
+
+    <!-- 土曜レク -->
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p>
+      <label>参加可否</label>
+      <div class="choice-grid">
+        <div class="choice-btn" id="req-yes" onclick="setChoice('req','yes')">参加</div>
+        <div class="choice-btn" id="req-no"  onclick="setChoice('req','no')">不参加</div>
+      </div>
+      <label style="margin-top:10px;">参加方法</label>
+      <div class="choice-grid">
+        <div class="choice-btn" id="way-go"   onclick="setChoice('way','go')">通所</div>
+        <div class="choice-btn" id="way-home" onclick="setChoice('way','home')">在宅</div>
+      </div>
+    </div>
+
+    <!-- 通所日数 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <p class="sec-label" style="margin:0;"><i class="ti ti-calendar"></i> 今月の通所日数</p>
+        
+      </div>
+      <div class="day-row">
+        <button class="day-btn" onclick="addDay(-1)">-</button>
+        <div style="flex:1; text-align:center;">
+          <p style="font-size:40px; font-weight:bold; color:#ff9f43; margin:0;" id="days-count">0</p>
+          <p style="font-size:12px; color:#7c5a43; margin:0; font-weight:bold;">日</p>
         </div>
+        <button class="day-btn" onclick="addDay(1)">+</button>
+      </div>
+      <div class="seikinn-box" id="seikinn-box">
+        <p style="font-size:13px; margin:0;" id="seikinn-msg"></p>
       </div>
     </div>
-    <div class="work-total">
-      <p style="font-size:13px;color:#7c5a43;margin:0 0 2px;font-weight:bold;">今日の勤務時間</p>
-      <p style="font-size:22px;font-weight:bold;color:#d35400;" id="work-hours">-- 時間 -- 分</p>
-    </div>
-    <div style="text-align:right;margin-top:10px;">
-      <button class="reset-btn" onclick="resetStamp()">今日の打刻をリセット</button>
-    </div>
-  </div>
 
-  <!-- 申し伝え・職員から・土曜レク -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <p class="sec-label" style="margin:0;"><i class="ti ti-message-dots"></i> 連絡・土曜レク入力</p>
-      <span class="saved-badge" id="memo-saved">保存済み ✓</span>
-    </div>
-
-    <label>🌟 小川様からの申し伝え</label>
-    <textarea id="memo" placeholder="例：今日は体調良く集中して作業できました！" oninput="saveMemo()" style="margin-bottom:14px;"></textarea>
-
-    <label style="margin-top:4px;">👩‍💼 職員からの伝言</label>
-    <textarea id="staff-memo" placeholder="職員からのメッセージ" oninput="saveMemo()" style="margin-bottom:14px;"></textarea>
-
-    <label style="margin-top:4px;">📅 今月の予定・お休みメモ</label>
-    <textarea id="schedule-memo" placeholder="例：6/15はお休み予定" oninput="saveMemo()" style="margin-bottom:14px;"></textarea>
-
-    <label style="margin-bottom:8px;">土曜レク 参加可否</label>
-    <div class="choice-grid">
-      <div class="choice-btn" id="req-yes" onclick="setChoice('req','yes')">参加 🐾</div>
-      <div class="choice-btn" id="req-no"  onclick="setChoice('req','no')">不参加 ✖</div>
-    </div>
-
-    <label style="margin:4px 0 8px;">土曜レク 参加方法</label>
-    <div class="choice-grid" style="margin-bottom:0;">
-      <div class="choice-btn" id="way-go"   onclick="setChoice('way','go')">通所</div>
-      <div class="choice-btn" id="way-home" onclick="setChoice('way','home')">在宅</div>
-    </div>
-  </div>
-
-  <!-- 通所日数 -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <p class="sec-label" style="margin:0;"><i class="ti ti-calendar"></i> 今月の通所日数</p>
-      <button class="reset-btn" onclick="resetDays()">リセット</button>
-    </div>
-    <div class="day-row">
-      <button class="day-btn" onclick="addDay(-1)">-</button>
-      <div style="flex:1;text-align:center;">
-        <p style="font-size:44px;font-weight:bold;color:#ff9f43;margin:0;" id="days-count">0</p>
-        <p style="font-size:14px;color:#7c5a43;margin:0;font-weight:bold;">日</p>
+    <!-- 工賃計算 -->
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算（ごほうびおやつ）</p>
+      <div style="display:flex; gap:10px; margin-bottom:12px; align-items:flex-end;">
+        <div style="flex:1;">
+          <label style="margin-bottom:4px;">今月の合計時間</label>
+          <input type="number" id="total-hours" min="0" step="0.1" placeholder="例：40" oninput="saveTotalHours()" style="margin-bottom:0;">
+        </div>
+        <button class="reset-btn" id="btn-calc-history" style="padding:12px 10px; height:49px; background:#ffecd9; border-color:#ff9f43; color:#d35400; font-weight:bold; margin-bottom:0;">履歴から集計</button>
       </div>
-      <button class="day-btn" onclick="addDay(1)">+</button>
+      <label>食事した回数</label>
+      <input type="number" id="meals" min="0" placeholder="例：10" oninput="saveMeals()">
+      <label>食費単価（円）</label>
+      <input type="number" id="food-unit-price" value="550" oninput="saveMeals()">
+      <div class="grid2" style="margin-bottom:10px;">
+        <div class="metric"><p class="metric-label">基本工賃</p><p class="metric-value" id="w-base">--</p></div>
+        <div class="metric"><p class="metric-label">精勤手当</p><p class="metric-value" id="w-bonus">--</p></div>
+        <div class="metric"><p class="metric-label">食費</p><p class="metric-value" id="w-food">--</p></div>
+        <div class="metric"><p class="metric-label">振込日</p><p class="metric-value" style="font-size:13px;" id="w-paydate">翌月20日</p></div>
+      </div>
+      <div class="total-box">
+        <p class="total-label">手取り工賃（食費引き後）🐾</p>
+        <p class="total-value" id="w-total">-- 円</p>
+      </div>
     </div>
-    <div class="seikinn-box" id="seikinn-box">
-      <p style="font-size:15px;margin:0;" id="seikinn-msg"></p>
+
+    <!-- 勤務履歴 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p>
+        <button id="btn-clear-history" style="font-size:16px; padding:8px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-weight:bold; cursor:pointer;">履歴を全消去</button>
+      </div>
+      <div id="history-list" style="font-size:18px; line-height:1.8; max-height:160px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:10px;"></div>
     </div>
+
+    <!-- リセット・全消去ボタン横並び -->
+    <div class="card" style="padding:1rem;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button onclick="resetDays()" style="font-size:16px; padding:14px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-weight:bold; cursor:pointer;">通所日数リセット</button>
+        <button id="btn-clear-history2" style="font-size:16px; padding:14px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-weight:bold; cursor:pointer;">履歴を全消去</button>
+      </div>
+    </div>
+
+    <!-- コピーボタン -->
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-copy"></i> クリップボードにコピー</p>
+      <p style="font-size:18px; color:#fff; background:#7c5a43; padding:8px 12px; border-radius:8px; margin:0 0 12px; font-weight:bold;">Sheets・Meetチャットに貼り付けて使ってにゃ🐾</p>
+      <button onclick="copyAll()" style="width:100%; padding:14px; border-radius:12px; border:2px solid #ff9f43; background:#ffecd9; color:#d35400; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:10px;">
+        <i class="ti ti-clipboard" style="margin-right:6px;"></i>全部コピーするにゃ！🐾
+      </button>
+      <div id="copy-preview" style="display:none; background:#f7f0e8; border-radius:10px; padding:12px; font-size:13px; color:#5c4033; white-space:pre-line; line-height:1.8; border:1px dashed #ff9f43;"></div>
+      <p id="copy-msg" style="display:none; text-align:center; font-size:15px; color:#fff; font-weight:bold; margin-top:8px; background:#2e7d0e; padding:10px; border-radius:8px;">✅ コピーしました！Sheetsまたはチャットに貼り付けてにゃ🐾</p>
+    </div>
+
   </div>
-
-  <!-- 工賃計算 -->
-  <div class="card">
-    <p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算（ごほうびおやつ）</p>
-
-    <label style="margin-bottom:6px;">今月の合計勤務時間</label>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-      <input type="number" id="total-hours" min="0" step="0.5" placeholder="例：40" oninput="calcWage()" style="margin-bottom:0;flex:1;">
-      <span class="food-unit">時間</span>
-      <button class="btn-small" onclick="calcFromHistory()">履歴から集計</button>
-    </div>
-
-    <label style="margin-bottom:6px;">食事した回数</label>
-    <div class="food-row">
-      <input type="number" id="meals" min="0" placeholder="例：10" oninput="calcWage()">
-      <span class="food-unit">回</span>
-    </div>
-
-    <label style="margin-bottom:6px;">食費単価（円/回）</label>
-    <input type="number" id="food-unit-price" min="0" value="550" oninput="calcWage()">
-
-    <div class="grid2" style="margin-bottom:12px;">
-      <div class="metric"><p class="metric-label">基本工賃</p><p class="metric-value" id="w-base">--</p></div>
-      <div class="metric"><p class="metric-label">精勤手当</p><p class="metric-value" id="w-bonus">--</p></div>
-      <div class="metric"><p class="metric-label">食費</p><p class="metric-value" id="w-food">--</p></div>
-      <div class="metric"><p class="metric-label">振込日</p><p class="metric-value" style="font-size:14px;" id="w-paydate">翌月20日</p></div>
-    </div>
-    <div class="total-box">
-      <p class="total-label">手取り工賃（食費引き後）🐾</p>
-      <p class="total-value" id="w-total">-- 円</p>
-    </div>
-  </div>
-
-  <!-- 勤務履歴 -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p>
-      <span id="history-total" style="font-size:13px;color:#d35400;font-weight:bold;"></span>
-    </div>
-    <ul class="history-list" id="history-list">
-      <li style="color:#ba9b85;font-size:14px;justify-content:center;">まだ記録がないにゃ 🐾</li>
-    </ul>
-  </div>
-
 </div>
-</div><!-- #app -->
+</div>
 
 <script>
-// ── パスワード認証 ──
-const CORRECT_PW = '8888';
-const SESSION_KEY = 'kinntai_auth';
-if (sessionStorage.getItem(SESSION_KEY) === 'ok') unlock();
+// ===== 初期化 =====
+const d = new Date();
+window._prefix  = d.getFullYear()+'_'+(d.getMonth()+1)+'_';
+const todayStr  = window._prefix + d.getDate();
+window._KEY_STAMP   = todayStr+'_stamp';
+window._KEY_DAYS    = window._prefix+'days';
+window._KEY_HISTORY = window._prefix+'history';
+window._KEY_SUBMIT  = todayStr+'_submitted';
 
-function checkPw(submit) {
-  const val = document.getElementById('pw-input').value;
+// 日付変わったらリセット
+const lastVisit = localStorage.getItem('last_visit_date');
+if (lastVisit !== todayStr) { clearTodayData(); localStorage.setItem('last_visit_date', todayStr); }
+
+// ===== パスワード =====
+const PW = '8888';
+if (sessionStorage.getItem('logged_in') === 'yes') unlock();
+
+function checkPw() {
+  const v = document.getElementById('pw-input').value;
   const err = document.getElementById('pw-error');
-  if (val === CORRECT_PW) {
-    sessionStorage.setItem(SESSION_KEY, 'ok');
-    unlock();
-  } else if (submit) {
-    err.textContent = 'パスワードが違うにゃ ✖';
-    document.getElementById('pw-input').value = '';
-  } else {
-    err.textContent = '';
+  err.textContent = '';
+  if (v.length === 5) {
+    if (v.slice(1) === PW || v.slice(0,4) === PW) { sessionStorage.setItem('logged_in','yes'); unlock(); }
+    else { err.textContent = 'パスワードが違うにゃ ✖'; document.getElementById('pw-input').value = ''; }
   }
 }
-
 function unlock() {
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  init();
+  clearTodayData();
+  initFields();
 }
 
-function init() {
-  const d = new Date();
-  const YM = d.getFullYear()+'_'+(d.getMonth()+1);
-  const TODAY = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+// ===== 表示 =====
+document.getElementById('today-label').textContent =
+  (d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
+const nm = new Date(d.getFullYear(), d.getMonth()+1, 20);
+document.getElementById('w-paydate').textContent = (nm.getMonth()+1)+'月20日';
 
-  document.getElementById('today-label').textContent =
-    (d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
-  const nm = new Date(d.getFullYear(), d.getMonth()+1, 20);
-  document.getElementById('w-paydate').textContent = (nm.getMonth()+1)+'月20日';
-
-  // 通所日数
-  const KEY_DAYS = 'kinntai_days_'+YM;
-  window._days = parseInt(localStorage.getItem(KEY_DAYS)||'0');
-  window._KEY_DAYS = KEY_DAYS;
-  document.getElementById('days-count').textContent = window._days;
-  updateSeikinn();
-
-  // 打刻
-  const KEY_STAMP = 'kinntai_stamp_'+TODAY;
-  window._KEY_STAMP = KEY_STAMP;
-  window._TODAY = TODAY;
-  window._d = d;
-  let stampData = JSON.parse(localStorage.getItem(KEY_STAMP)||'{}');
-  window._startMs = stampData.startMs || null;
-  window._endMs   = stampData.endMs   || null;
-  if (window._startMs) {
-    document.getElementById('start-disp').textContent = hhmm(new Date(window._startMs));
-    document.getElementById('btn-start').disabled = true;
-  }
-  if (window._endMs) {
-    document.getElementById('end-disp').textContent = hhmm(new Date(window._endMs));
-    document.getElementById('btn-end').disabled = true;
-  }
-  if (window._startMs && window._endMs) showWorkHours();
-
-  // メモ・選択状態
-  const KEY_MEMO   = 'kinntai_memo_'+TODAY;
-  const KEY_CHOICE = 'kinntai_choice_'+TODAY;
-  const KEY_TC     = 'kinntai_tc_'+TODAY;
-  window._KEY_MEMO   = KEY_MEMO;
-  window._KEY_CHOICE = KEY_CHOICE;
-  window._KEY_TC     = KEY_TC;
-  const memoData   = JSON.parse(localStorage.getItem(KEY_MEMO)||'{}');
-  const choiceData = JSON.parse(localStorage.getItem(KEY_CHOICE)||'{}');
-  const tcData     = localStorage.getItem(KEY_TC) || null;
-  window._memoData   = memoData;
-  window._choiceData = choiceData;
-  if (memoData.text)         document.getElementById('memo').value          = memoData.text;
-  if (memoData.staffText)    document.getElementById('staff-memo').value    = memoData.staffText;
-  if (memoData.scheduleText) document.getElementById('schedule-memo').value = memoData.scheduleText;
-  window._choiceReq = choiceData.req || null;
-  window._choiceWay = choiceData.way || null;
-  if (window._choiceReq) applyChoice('req', window._choiceReq);
-  if (window._choiceWay) applyChoice('way', window._choiceWay);
-  if (tcData) applyTaichou(tcData);
-
-  // 履歴
-  const KEY_HISTORY = 'kinntai_history_'+YM;
-  window._KEY_HISTORY = KEY_HISTORY;
-  window._history = JSON.parse(localStorage.getItem(KEY_HISTORY)||'[]');
-  renderHistory();
-
-  calcWage();
-} // end init
-
-function hhmm(date) {
-  return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+function switchView(v) {
+  document.getElementById('view-main').style.display = v==='main'?'block':'none';
+  document.getElementById('view-sub').style.display  = v==='sub' ?'block':'none';
+  window.scrollTo(0,0);
 }
 
-function setTaichou(val) {
-  localStorage.setItem(window._KEY_TC, val);
-  applyTaichou(val);
+// ===== 打刻 =====
+window._startMs = null; window._endMs = null;
+window._selectedMood = null;
+
+function hhmm(dt) { return String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0'); }
+
+function clearTodayData() {
+  localStorage.removeItem(window._KEY_STAMP);
+  localStorage.removeItem(window._KEY_SUBMIT);
+  localStorage.removeItem(todayStr+'_choice_mood');
+  window._startMs = null; window._endMs = null; window._selectedMood = null;
 }
-function applyTaichou(val) {
-  document.getElementById('tc-good').className = 'taichou-btn'+(val==='good'?' active-good':'');
-  document.getElementById('tc-bad').className  = 'taichou-btn'+(val==='bad'?' active-bad':'');
+
+function initFields() {
+  document.getElementById('start-disp').textContent = '--:--';
+  document.getElementById('end-disp').textContent   = '--:--';
+  document.getElementById('work-hours').textContent  = '-- 時間 -- 分';
+  const sb = document.getElementById('start-btn'); sb.disabled = false; sb.textContent = '開始時刻を打刻';
+  const eb = document.getElementById('end-btn');   eb.disabled = false; eb.textContent = '終業時間を打刻';
+  const rb = document.getElementById('reg-btn');   rb.disabled = true;  rb.textContent = '今日のデータを登録するにゃ！ 🐾';
+  document.getElementById('paw-area').innerHTML = '';
+  document.getElementById('mood-good').className = 'choice-btn';
+  document.getElementById('mood-bad').className  = 'choice-btn';
 }
+
+function lockBtn(id) { const b=document.getElementById(id); b.disabled=true; b.textContent='打刻済み🐾'; }
 
 function stamp(type) {
   const now = new Date();
-  if (type === 'start') {
-    window._startMs = now.getTime();
-    document.getElementById('start-disp').textContent = hhmm(now);
-    document.getElementById('btn-start').disabled = true;
-  } else {
-    window._endMs = now.getTime();
-    document.getElementById('end-disp').textContent = hhmm(now);
-    document.getElementById('btn-end').disabled = true;
-  }
-  localStorage.setItem(window._KEY_STAMP, JSON.stringify({startMs: window._startMs, endMs: window._endMs}));
-  if (window._startMs && window._endMs && window._endMs > window._startMs) {
-    showWorkHours();
-    saveToHistory();
-  }
+  if (type==='start') { window._startMs=now.getTime(); document.getElementById('start-disp').textContent=hhmm(now); lockBtn('start-btn'); }
+  else                { window._endMs  =now.getTime(); document.getElementById('end-disp').textContent  =hhmm(now); lockBtn('end-btn');   }
+  localStorage.setItem(window._KEY_STAMP, JSON.stringify({startMs:window._startMs, endMs:window._endMs}));
+  if (window._startMs && window._endMs && window._endMs>window._startMs) showWorkHours();
+  checkReady();
 }
 
 function showWorkHours() {
   const diff = window._endMs - window._startMs;
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  document.getElementById('work-hours').textContent = h + ' 時間 ' + m + ' 分';
+  document.getElementById('work-hours').textContent =
+    Math.floor(diff/3600000)+' 時間 '+Math.floor((diff%3600000)/60000)+' 分';
 }
 
-function saveToHistory() {
-  const diff = window._endMs - window._startMs;
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const d = window._d;
-  const label = (d.getMonth()+1)+'/'+(d.getDate());
-  const idx = window._history.findIndex(r => r.date === window._TODAY);
-  const record = { date: window._TODAY, label, startMs: window._startMs, endMs: window._endMs, h, m };
-  if (idx >= 0) window._history[idx] = record;
-  else window._history.push(record);
-  window._history.sort((a,b) => a.date.localeCompare(b.date));
-  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(window._history));
-  renderHistory();
+function checkReady() {
+  if (localStorage.getItem(window._KEY_SUBMIT)==='yes') return;
+  document.getElementById('reg-btn').disabled = !(window._selectedMood && window._startMs && window._endMs);
 }
 
-function renderHistory() {
-  const ul = document.getElementById('history-list');
-  if (!window._history.length) {
-    ul.innerHTML = '<li style="color:#ba9b85;font-size:14px;justify-content:center;">まだ記録がないにゃ 🐾</li>';
-    document.getElementById('history-total').textContent = '';
-    return;
+function submitToday() {
+  if (!window._selectedMood||!window._startMs||!window._endMs) {
+    alert('体調の選択とOPEN・CLOSE打刻をすべて終わらせてにゃ🐾'); return;
   }
-  let totalMin = 0;
-  ul.innerHTML = window._history.map((r,i) => {
-    totalMin += r.h*60 + r.m;
-    const s = new Date(r.startMs), e = new Date(r.endMs);
-    return `<li>
-      <span>${r.label}（${hhmm(s)}〜${hhmm(e)}）</span>
-      <span style="display:flex;align-items:center;gap:8px;">
-        <span style="color:#d35400;font-weight:bold;">${r.h}h${r.m}m</span>
-        <button class="history-del" onclick="delHistory(${i})">✕</button>
-      </span>
-    </li>`;
-  }).join('');
-  const th = Math.floor(totalMin/60), tm = totalMin%60;
-  document.getElementById('history-total').textContent = `合計 ${th}h${tm}m`;
+  if (confirm('今日の体調と打刻データを登録してもよろしいですか？🐾')) {
+    localStorage.setItem(window._KEY_SUBMIT,'yes');
+    saveToHistory(); addDay(1);
+    const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
+    document.getElementById('paw-area').innerHTML='<span class="jumping-paw">🐾</span>'.repeat(5);
+  }
 }
 
-function delHistory(i) {
-  if (!confirm('この記録を削除しますか？')) return;
-  window._history.splice(i,1);
-  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(window._history));
-  renderHistory();
+function forceClear() {
+  if (confirm('今日の打刻・体調をクリアして最初から直しますか？🐾')) { clearTodayData(); initFields(); }
 }
 
-function calcFromHistory() {
-  let totalMin = 0;
-  window._history.forEach(r => totalMin += r.h*60 + r.m);
-  document.getElementById('total-hours').value = (totalMin/60).toFixed(1);
-  calcWage();
-}
-
-function resetStamp() {
-  if (!confirm('今日の打刻をリセットしてもよろしいですか？')) return;
-  window._startMs = null; window._endMs = null;
-  localStorage.removeItem(window._KEY_STAMP);
-  document.getElementById('start-disp').textContent = '--:--';
-  document.getElementById('end-disp').textContent = '--:--';
-  document.getElementById('work-hours').textContent = '-- 時間 -- 分';
-  document.getElementById('btn-start').disabled = false;
-  document.getElementById('btn-end').disabled = false;
-  const idx = window._history.findIndex(r => r.date === window._TODAY);
-  if (idx >= 0) { window._history.splice(idx,1); localStorage.setItem(window._KEY_HISTORY, JSON.stringify(window._history)); renderHistory(); }
-}
-
-let memoTimer = null;
-function saveMemo() {
-  clearTimeout(memoTimer);
-  memoTimer = setTimeout(() => {
-    window._memoData.text         = document.getElementById('memo').value;
-    window._memoData.staffText    = document.getElementById('staff-memo').value;
-    window._memoData.scheduleText = document.getElementById('schedule-memo').value;
-    localStorage.setItem(window._KEY_MEMO, JSON.stringify(window._memoData));
-    const badge = document.getElementById('memo-saved');
-    badge.classList.add('show');
-    setTimeout(() => badge.classList.remove('show'), 1500);
-  }, 600);
-}
-
+// ===== 体調・選択 =====
 function setChoice(type, val) {
-  if (type === 'req') window._choiceReq = val;
-  else window._choiceWay = val;
-  applyChoice(type, val);
-  window._choiceData = { req: window._choiceReq, way: window._choiceWay };
-  localStorage.setItem(window._KEY_CHOICE, JSON.stringify(window._choiceData));
+  if (type==='mood') window._selectedMood = val;
+  localStorage.setItem(todayStr+'_choice_'+type, val);
+  setChoiceVisual(type, val);
+  checkReady();
 }
-
-function applyChoice(type, val) {
-  if (type === 'req') {
+function setChoiceVisual(type, val) {
+  if (!val) return;
+  if (type==='mood') {
+    document.getElementById('mood-good').className = 'choice-btn'+(val==='good'?' active':'');
+    document.getElementById('mood-bad').className  = 'choice-btn'+(val==='bad' ?' active':'');
+    document.getElementById('mood-mid').className  = 'choice-btn'+(val==='mid' ?' active':'');
+  } else if (type==='req') {
     document.getElementById('req-yes').className = 'choice-btn'+(val==='yes'?' active':'');
-    document.getElementById('req-no').className  = 'choice-btn'+(val==='no'?' active':'');
+    document.getElementById('req-no').className  = 'choice-btn'+(val==='no' ?' active':'');
   } else {
-    document.getElementById('way-go').className   = 'choice-btn'+(val==='go'?' active':'');
+    document.getElementById('way-go').className   = 'choice-btn'+(val==='go'  ?' active':'');
     document.getElementById('way-home').className = 'choice-btn'+(val==='home'?' active':'');
   }
 }
+
+// ===== 通所日数 =====
+window._days = parseInt(localStorage.getItem(window._KEY_DAYS)||'0');
 
 function addDay(v) {
   window._days = Math.max(0, window._days+v);
@@ -553,41 +425,167 @@ function addDay(v) {
   document.getElementById('days-count').textContent = window._days;
   updateSeikinn(); calcWage();
 }
-
 function resetDays() {
   if (!confirm('本当に今月の通所日数をリセットしてもよろしいですか？🐾')) return;
-  window._days = 0; localStorage.setItem(window._KEY_DAYS, 0);
-  document.getElementById('days-count').textContent = 0;
+  window._days=0; localStorage.setItem(window._KEY_DAYS,0);
+  document.getElementById('days-count').textContent=0;
   updateSeikinn(); calcWage();
 }
-
 function updateSeikinn() {
-  const box = document.getElementById('seikinn-box');
-  const msg = document.getElementById('seikinn-msg');
-  if (window._days >= 15) {
-    box.className = 'seikinn-box seikinn-success';
-    msg.textContent = '精勤手当あり！ +5,000円 🐱';
-  } else {
-    box.className = 'seikinn-box seikinn-warning';
-    msg.textContent = 'あと '+(15-window._days)+' 日で精勤手当 +5,000円 🐾';
-  }
+  const box=document.getElementById('seikinn-box'), msg=document.getElementById('seikinn-msg');
+  if (window._days>=15) { box.className='seikinn-box seikinn-success'; msg.textContent='精勤手当あり！ +5,000円 🐱'; }
+  else { box.className='seikinn-box seikinn-warning'; msg.textContent='あと '+(15-window._days)+' 日で精勤手当 +5,000円 🐾'; }
 }
 
+// ===== 工賃計算 =====
 function fmt(n) { return n.toLocaleString()+' 円'; }
-
 function calcWage() {
-  const h = parseFloat(document.getElementById('total-hours').value)||0;
-  const m = parseInt(document.getElementById('meals').value)||0;
-  const unitPrice = parseInt(document.getElementById('food-unit-price').value)||550;
-  const base  = Math.round(h * 1140);
-  const bonus = (window._days||0) >= 15 ? 5000 : 0;
-  const food  = m * unitPrice;
-  const total = Math.max(0, base + bonus - food);
-  document.getElementById('w-base').textContent  = h > 0 ? fmt(base)  : '--';
+  const h=parseFloat(document.getElementById('total-hours').value)||0;
+  const m=parseInt(document.getElementById('meals').value)||0;
+  const u=parseInt(document.getElementById('food-unit-price').value)||550;
+  const base=Math.round(h*1140), bonus=window._days>=15?5000:0, food=m*u;
+  document.getElementById('w-base').textContent  = h>0?fmt(base):'--';
   document.getElementById('w-bonus').textContent = fmt(bonus);
-  document.getElementById('w-food').textContent  = m > 0 ? '- '+fmt(food) : '--';
-  document.getElementById('w-total').textContent = h > 0 ? fmt(total) : '-- 円';
+  document.getElementById('w-food').textContent  = m>0?'- '+fmt(food):'--';
+  document.getElementById('w-total').textContent = h>0?fmt(Math.max(0,base+bonus-food)):'-- 円';
 }
+function saveTotalHours() { localStorage.setItem(window._prefix+'total_hours', document.getElementById('total-hours').value); calcWage(); }
+function saveMeals() {
+  localStorage.setItem(window._prefix+'meals', document.getElementById('meals').value);
+  localStorage.setItem(window._prefix+'food_price', document.getElementById('food-unit-price').value);
+  calcWage();
+}
+
+// ===== メモ =====
+let memoTimer;
+function saveMemo() {
+  clearTimeout(memoTimer);
+  const b=document.getElementById('save-badge'); b.style.display='none';
+  memoTimer=setTimeout(()=>{
+    localStorage.setItem(todayStr+'_memo', document.getElementById('memo').value);
+    b.style.display='block'; setTimeout(()=>b.style.display='none',1500);
+  },800);
+}
+function saveField(key,val) { localStorage.setItem(window._prefix+key, val); }
+
+
+// ===== コピー =====
+function copyAll() {
+  const moodMap = { good:'😊 ○', bad:'😔 ×', mid:'😐 ―' };
+  const mood  = moodMap[window._selectedMood] || '未選択';
+  const start = document.getElementById('start-disp').textContent;
+  const end   = document.getElementById('end-disp').textContent;
+  const hours = document.getElementById('work-hours').textContent;
+  const days  = document.getElementById('days-count').textContent;
+  const memo  = document.getElementById('memo').value || 'なし';
+  const staffMemo    = document.getElementById('staff-memo').value || 'なし';
+  const scheduleMemo = document.getElementById('schedule-memo').value || 'なし';
+  const reqMap = { yes:'参加🐾', no:'不参加✖' };
+  const wayMap = { go:'通所', home:'在宅' };
+  const req   = reqMap[localStorage.getItem(todayStr+'_choice_req')] || '未選択';
+  const way   = wayMap[localStorage.getItem(todayStr+'_choice_way')] || '未選択';
+  const base  = document.getElementById('w-base').textContent;
+  const bonus = document.getElementById('w-bonus').textContent;
+  const food  = document.getElementById('w-food').textContent;
+  const total = document.getElementById('w-total').textContent;
+  const paydate = document.getElementById('w-paydate').textContent;
+  const lines = [
+    '📅 ' + document.getElementById('today-label').textContent,
+    '━━━━━━━━━━━━',
+    '【体調】' + mood,
+    '【開始】' + start + '　【終了】' + end,
+    '【勤務時間】' + hours,
+    '━━━━━━━━━━━━',
+    '【今月の通所日数】' + days + '日',
+    '【土曜レク】' + req + '　参加方法：' + way,
+    '━━━━━━━━━━━━',
+    '【小川さんからの申し伝え】', memo,
+    '【職員からの伝言】', staffMemo,
+    '【お休みメモ】', scheduleMemo,
+    '━━━━━━━━━━━━',
+    '【基本工賃】' + base,
+    '【精勤手当】' + bonus,
+    '【食費】' + food,
+    '【手取り工賃】' + total,
+    '【振込日】' + paydate,
+  ];
+  const text = lines.join('\n');
+  const preview = document.getElementById('copy-preview');
+  const msg = document.getElementById('copy-msg');
+  preview.style.display = 'block';
+  preview.textContent = text;
+  navigator.clipboard.writeText(text).then(() => {
+    msg.style.display = 'block'; msg.style.color = '#fff';
+    msg.textContent = '✅ コピーしました！Sheetsまたはチャットに貼り付けてにゃ🐾';
+  }).catch(() => {
+    msg.style.display = 'block'; msg.style.color = '#d35400';
+    msg.textContent = '⚠️ 上のテキストを手動でコピーしてにゃ';
+  });
+}
+
+// ===== 履歴 =====
+function getHistory() { return JSON.parse(localStorage.getItem(window._KEY_HISTORY)||'[]'); }
+function saveToHistory() {
+  let hist=getHistory();
+  const label=(d.getMonth()+1)+'/'+d.getDate();
+  if (hist.some(r=>r.date===label)) return;
+  const diff=window._endMs-window._startMs;
+  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
+  hist.push({date:label, start:hhmm(new Date(window._startMs)), end:hhmm(new Date(window._endMs)), hours:h+(m/60), text:h+'h'+m+'m'});
+  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
+  renderHistory();
+}
+function renderHistory() {
+  const box=document.getElementById('history-list'), hist=getHistory();
+  if (!hist.length) { box.innerHTML='<span style="color:#ba9b85;">まだ履歴はないにゃ🐾</span>'; return; }
+  box.innerHTML=hist.map((r,i)=>`
+    <div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eaddca;padding:4px 0;">
+      <span>📅 ${r.date}（${r.start}〜${r.end}）</span>
+      <span style="font-weight:bold;color:#d35400;">${r.text} <span style="cursor:pointer;color:#ba9b85;" onclick="deleteHistory(${i})">✖</span></span>
+    </div>`).join('');
+}
+function deleteHistory(i) {
+  if (!confirm('この記録を削除しますか？')) return;
+  let hist=getHistory(); hist.splice(i,1); localStorage.setItem(window._KEY_HISTORY,JSON.stringify(hist)); renderHistory();
+}
+document.getElementById('btn-clear-history2').onclick=()=>{
+  if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？🐾')) { localStorage.removeItem(window._KEY_HISTORY); renderHistory(); }
+};
+document.getElementById('btn-clear-history').onclick=()=>{
+  if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？🐾')) { localStorage.removeItem(window._KEY_HISTORY); renderHistory(); }
+};
+document.getElementById('btn-calc-history').onclick=()=>{
+  const sum=getHistory().reduce((a,r)=>a+r.hours,0);
+  document.getElementById('total-hours').value=sum.toFixed(1); saveTotalHours();
+};
+
+// ===== 起動時復元 =====
+initFields();
+document.getElementById('days-count').textContent = window._days;
+
+const saved=JSON.parse(localStorage.getItem(window._KEY_STAMP)||'null');
+if (saved) {
+  if (saved.startMs) { window._startMs=saved.startMs; document.getElementById('start-disp').textContent=hhmm(new Date(saved.startMs)); lockBtn('start-btn'); }
+  if (saved.endMs)   { window._endMs  =saved.endMs;   document.getElementById('end-disp').textContent  =hhmm(new Date(saved.endMs));   lockBtn('end-btn');   }
+  if (saved.startMs && saved.endMs && saved.endMs>saved.startMs) showWorkHours();
+}
+const savedMood=localStorage.getItem(todayStr+'_choice_mood');
+if (savedMood) { window._selectedMood=savedMood; setChoiceVisual('mood',savedMood); }
+if (localStorage.getItem(window._KEY_SUBMIT)==='yes') {
+  const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
+  document.getElementById('paw-area').innerHTML='<span class="jumping-paw">🐾</span>'.repeat(5);
+} else { checkReady(); }
+
+document.getElementById('memo').value          = localStorage.getItem(todayStr+'_memo')||'';
+document.getElementById('staff-memo').value    = localStorage.getItem(window._prefix+'staff_memo')||'';
+document.getElementById('schedule-memo').value = localStorage.getItem(window._prefix+'schedule_memo')||'';
+document.getElementById('total-hours').value   = localStorage.getItem(window._prefix+'total_hours')||'';
+document.getElementById('meals').value         = localStorage.getItem(window._prefix+'meals')||'';
+document.getElementById('food-unit-price').value = localStorage.getItem(window._prefix+'food_price')||'550';
+
+setChoiceVisual('req', localStorage.getItem(todayStr+'_choice_req'));
+setChoiceVisual('way', localStorage.getItem(todayStr+'_choice_way'));
+updateSeikinn(); calcWage(); renderHistory();
 </script>
 </body>
 </html>
