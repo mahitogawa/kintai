@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勤怠 & 工賃アプリ 🐾</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #fbf8f3;
+  color: #2c1d11;
+  min-height: 100vh;
+  padding: 1rem;
+}
+.container { max-width: 480px; margin: 0 auto; padding: 1rem 0; }
+.card {
+  background: #fff;
+  border: 1px solid #eaddca;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(139,94,60,0.05);
+}
+.sec-label, label { font-size: 13px; color: #5c4033; font-weight: bold; margin: 0 0 12px; display: block; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.metric { background: #f7f0e8; border-radius: 10px; padding: 12px; }
+.metric-label { font-size: 11px; color: #7c5a43; margin: 0 0 3px; font-weight: bold; }
+.metric-value { font-size: 15px; font-weight: bold; color: #2c1d11; margin: 0; word-break: break-all; }
+.stamp-block { background: #f7f0e8; border-radius: 10px; padding: 12px; border: 1px solid #eaddca; min-width: 0; }
+.stamp-time { font-size: 22px; font-weight: bold; color: #d35400; margin: 0 0 8px; letter-spacing: 0.02em; }
+.btn {
+  width: 100%; padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d35400;
+  background: #ff9f43;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn:hover { background: #e67e22; }
+.btn:disabled { background: #ccc; border-color: #bbb; cursor: default; opacity: 0.7; }
+.btn-small {
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid #d35400; background: #fff;
+  color: #d35400; font-size: 12px; font-weight: bold; cursor: pointer;
+}
+.btn-small:hover { background: #fff3e8; }
+.meet-btn {
+  display: block; text-align: center;
+  padding: 14px;
+  background: #E6F1FB;
+  color: #0C447C;
+  border-radius: 12px;
+  border: 1px solid #B5D4F4;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 1rem;
+}
+.meet-btn:hover { background: #B5D4F4; }
+.work-total {
+  margin-top: 10px; text-align: center;
+  padding: 10px; background: #f7f0e8;
+  border-radius: 10px; border: 1px dashed #ff9f43;
+}
+.day-row { display: flex; align-items: center; gap: 16px; }
+.day-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid #eaddca; background: #fff;
+  color: #ff9f43; font-size: 20px; font-weight: bold; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.seikinn-box { margin-top: 10px; padding: 8px; border-radius: 10px; text-align: center; font-weight: bold; }
+.seikinn-success { background: #EAF3DE; color: #27500A; border: 1px solid #c2e29c; }
+.seikinn-warning { background: #FAEEDA; color: #633806; border: 1px solid #f3d5a2; }
+input[type="number"], textarea, input[type="text"] {
+  width: 100%; padding: 10px 12px; border: 1px solid #eaddca; border-radius: 10px;
+  font-size: 15px; background: #fff; color: #2c1d11; font-family: inherit;
+}
+input[type="number"] { margin-bottom: 12px; }
+textarea { height: 70px; resize: none; }
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.choice-btn {
+  padding: 10px; border-radius: 8px; border: 1px solid #eaddca;
+  background: #f7f0e8; color: #5c4033; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px;
+  transition: background 0.15s;
+}
+.choice-btn.active { background: #ff9f43; color: #fff; border-color: #d35400; }
+.total-box { background: #ffecd9; border-radius: 12px; padding: 14px; text-align: center; border: 2px solid #ff9f43; }
+.total-label { font-size: 13px; color: #d35400; margin: 0 0 4px; font-weight: bold; }
+.total-value { font-size: 26px; font-weight: bold; color: #d35400; margin: 0; }
+.reset-btn { font-size: 11px; padding: 4px 10px; border-radius: 8px; border: 1px solid #eaddca; background: #fff; color: #7c5a43; cursor: pointer; }
+.saved-badge {
+  display: inline-block; font-size: 11px; color: #3B6D11; background: #EAF3DE;
+  border: 1px solid #c2e29c; border-radius: 6px; padding: 2px 8px; margin-left: 8px;
+  opacity: 0; transition: opacity 0.3s;
+}
+.saved-badge.show { opacity: 1; }
+.history-list { list-style: none; padding: 0; margin-top: 8px; }
+.history-list li { flex-wrap: wrap;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: #5c4033; padding: 5px 0;
+  border-bottom: 1px dashed #eaddca;
+}
+.history-list li:last-child { border-bottom: none; }
+.history-del { font-size: 11px; color: #d35400; background: none; border: none; cursor: pointer; padding: 2px 6px; }
+.toggle-link { font-size: 12px; color: #d35400; cursor: pointer; text-decoration: underline; margin-top: 6px; display: inline-block; }
+.food-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.food-row input[type="number"] { margin-bottom: 0; flex: 1; min-width: 80px; }
+.food-unit { font-size: 13px; color: #5c4033; white-space: nowrap; }
+
+@media (max-width: 360px) {
+  body { padding: 0.5rem; }
+  .card { padding: 1rem; }
+  .stamp-time { font-size: 18px; }
+  .metric-value { font-size: 13px; }
+  .total-value { font-size: 22px; }
+  .meet-btn { font-size: 13px; padding: 12px; }
+}
+@media (max-width: 400px) {
+  .grid2.stamp-grid { grid-template-columns: 1fr; }
+  .stamp-time { font-size: 28px; }
+  .metric-value { font-size: 13px; word-break: break-all; }
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #1e1814; color: #f5ebe6; }
+  .card { background: #2d241e; border-color: #4a3b31; }
+  .sec-label, label { color: #ffecd9; }
+  .metric, .stamp-block, .work-total, .choice-btn { background: #3a2e26; border-color: #4a3b31; color: #f5ebe6; }
+  .choice-btn.active { background: #ff9f43; color: #fff; }
+  .metric-label { color: #d2b48c; } .metric-value { color: #f5ebe6; }
+  .day-btn { background: #3a2e26; border-color: #4a3b31; color: #ff9f43; }
+  input[type="number"], textarea, input[type="text"] { background: #3a2e26; color: #f5ebe6; border-color: #4a3b31; }
+  .reset-btn, .btn-small { background: #3a2e26; color: #d2b48c; border-color: #4a3b31; }
+  .btn-small { color: #ff9f43; }
+  .history-list li { flex-wrap: wrap; color: #d2b48c; border-bottom-color: #4a3b31; }
+  .toggle-link { color: #ff9f43; }
+  .food-unit { color: #d2b48c; }
+  .stamp-alert { background: #3a2a10 !important; border-color: #7a5120 !important; }
+  .stamp-alert p { color: #fbbf77 !important; }
+  .stamp-alert i { color: #f59e0b !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
+    <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加するにゃ！🐾
+  </a>
+
+  <!-- ヘッダー -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:18px; font-weight:bold; color: #ff9f43;"><i class="ti ti-paw"></i> 勤怠 &amp; 工賃 🐾</span>
+      <span style="font-size:13px; color:#ba9b85; font-weight: bold;" id="today-label"></span>
+    </div>
+    <p style="font-size:13px; color:#ba9b85; margin:4px 0 0; font-weight: bold;">ワンダーワークIT池下</p>
+  </div>
+
+  <!-- 打刻 -->
+  <div class="card">
+    <p class="sec-label"><i class="ti ti-cat"></i> 時刻打刻（マーニャ時計）</p>
+    <div class="grid2 stamp-grid">
+      <div class="stamp-block">
+        <p style="font-size:16px; color:#7c5a43; margin:0 0 6px; font-weight: bold;">開始時刻 🐾</p>
+        <p class="stamp-time" id="start-disp">--:--</p>
+        <button class="btn" id="btn-start" onclick="stamp('start')">打刻にゃ</button>
+        <div class="stamp-alert" style="display:flex; align-items:center; gap:4px; margin-top:8px; padding:6px 8px; background:#fef3e2; border:1px solid #f3c87a; border-radius:8px;">
+          <i class="ti ti-alert-triangle" style="font-size:16px; color:#b45309; flex-shrink:0;"></i>
+          <p style="font-size:11px; color:#92400e; margin:0; line-height:1.4; font-weight:bold;">打刻後は変更できません</p>
+        </div>
+      </div>
+      <div class="stamp-block">
+        <p style="font-size:16px; color:#7c5a43; margin:0 0 6px; font-weight: bold;">終了時刻 🐾</p>
+        <p class="stamp-time" id="end-disp">--:--</p>
+        <button class="btn" id="btn-end" onclick="stamp('end')">打刻にゃ</button>
+        <div class="stamp-alert" style="display:flex; align-items:center; gap:4px; margin-top:8px; padding:6px 8px; background:#fef3e2; border:1px solid #f3c87a; border-radius:8px;">
+          <i class="ti ti-alert-triangle" style="font-size:16px; color:#b45309; flex-shrink:0;"></i>
+          <p style="font-size:11px; color:#92400e; margin:0; line-height:1.4; font-weight:bold;">打刻後は変更できません</p>
+        </div>
+      </div>
+    </div>
+    <div class="work-total">
+      <p style="font-size:12px; color:#7c5a43; margin:0 0 2px; font-weight: bold;">今日の勤務時間</p>
+      <p style="font-size:20px; font-weight:bold; color: #d35400;" id="work-hours">-- 時間 -- 分</p>
+    </div>
+    <div style="text-align:right; margin-top:8px;">
+      <button class="reset-btn" onclick="resetStamp()">今日の打刻をリセット</button>
+    </div>
+  </div>
+
+  <!-- 申し伝え＆土曜レク -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <p class="sec-label" style="margin:0;"><i class="ti ti-message-dots"></i> 申し伝え &amp; 土曜レク入力</p>
+      <span class="saved-badge" id="memo-saved">保存済み ✓</span>
+    </div>
+
+    <label>小川様からの申し伝え</label>
+    <textarea id="memo" placeholder="例：今日は体調良く集中して作業できました！" oninput="saveMemo()"></textarea>
+
+    <label style="margin: 14px 0 6px;">土曜レク 参加可否</label>
+    <div class="choice-grid">
+      <div class="choice-btn" id="req-yes" onclick="setChoice('req', 'yes')">参加 🐾</div>
+      <div class="choice-btn" id="req-no" onclick="setChoice('req', 'no')">不参加 ✖</div>
+    </div>
+
+    <label style="margin: 10px 0 6px;">土曜レク 参加方法</label>
+    <div class="choice-grid" style="margin-bottom:0;">
+      <div class="choice-btn" id="way-go" onclick="setChoice('way', 'go')">通所</div>
+      <div class="choice-btn" id="way-home" onclick="setChoice('way', 'home')">在宅</div>
+    </div>
+  </div>
+
+  <!-- 通所日数 -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <p class="sec-label" style="margin:0;"><i class="ti ti-calendar"></i> 今月の通所日数（アイの記録）</p>
+      <button class="reset-btn" onclick="resetDays()">リセット</button>
+    </div>
+    <div class="day-row">
+      <button class="day-btn" onclick="addDay(-1)">-</button>
+      <div style="flex:1; text-align:center;">
+        <p style="font-size:36px; font-weight:bold; color: #ff9f43; margin:0;" id="days-count">0</p>
+        <p style="font-size:12px; color:#7c5a43; margin:0; font-weight: bold;">日</p>
+      </div>
+      <button class="day-btn" onclick="addDay(1)">+</button>
+    </div>
+    <div class="seikinn-box" id="seikinn-box">
+      <p style="font-size:13px; margin:0;" id="seikinn-msg"></p>
+    </div>
+  </div>
+
+  <!-- 工賃計算 -->
+  <div class="card">
+    <p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算（ごほうびおやつ）</p>
+
+    <label style="margin-bottom:4px;">今月の合計勤務時間</label>
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+      <input type="number" id="total-hours" min="0" step="0.5" placeholder="例：40" oninput="calcWage()" style="margin-bottom:0; flex:1;">
+      <span class="food-unit">時間</span>
+      <button class="btn-small" onclick="calcFromHistory()">履歴から集計</button>
+    </div>
+
+    <label style="margin-bottom:4px;">食事した回数</label>
+    <div class="food-row">
+      <input type="number" id="meals" min="0" placeholder="例：10" oninput="calcWage()">
+      <span class="food-unit">回</span>
+    </div>
+
+    <label style="margin-bottom:4px;">食費単価（円/回）</label>
+    <input type="number" id="food-unit-price" min="0" value="550" oninput="calcWage()" style="margin-bottom:12px;">
+
+    <div class="grid2" style="margin-bottom:10px;">
+      <div class="metric"><p class="metric-label">基本工賃</p><p class="metric-value" id="w-base">--</p></div>
+      <div class="metric"><p class="metric-label">精勤手当</p><p class="metric-value" id="w-bonus">--</p></div>
+      <div class="metric"><p class="metric-label">食費</p><p class="metric-value" id="w-food">--</p></div>
+      <div class="metric"><p class="metric-label">振込日</p><p class="metric-value" style="font-size:13px;" id="w-paydate">翌月20日</p></div>
+    </div>
+    <div class="total-box">
+      <p class="total-label">手取り工賃（食費引き後）🐾</p>
+      <p class="total-value" id="w-total">-- 円</p>
+    </div>
+  </div>
+
+  <!-- 勤務履歴 -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p>
+      <span id="history-total" style="font-size:12px; color:#d35400; font-weight:bold;"></span>
+    </div>
+    <ul class="history-list" id="history-list">
+      <li style="color:#ba9b85; font-size:12px; justify-content:center;">まだ記録がないにゃ 🐾</li>
+    </ul>
+  </div>
+
+</div>
+<script>
+const d = new Date();
+const YM = d.getFullYear()+'_'+(d.getMonth()+1);
+const TODAY = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+
+document.getElementById('today-label').textContent =
+  (d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
+const nm = new Date(d.getFullYear(), d.getMonth()+1, 20);
+document.getElementById('w-paydate').textContent = (nm.getMonth()+1)+'月20日';
+
+// ── 通所日数 ──
+const KEY_DAYS = 'kinntai_days_'+YM;
+let days = parseInt(localStorage.getItem(KEY_DAYS)||'0');
+document.getElementById('days-count').textContent = days;
+updateSeikinn();
+
+// ── 打刻（今日分のみ保存） ──
+const KEY_STAMP = 'kinntai_stamp_'+TODAY;
+let stampData = JSON.parse(localStorage.getItem(KEY_STAMP)||'{}');
+let startMs = stampData.startMs || null;
+let endMs   = stampData.endMs   || null;
+if (startMs) {
+  const t = new Date(startMs);
+  document.getElementById('start-disp').textContent = hhmm(t);
+  document.getElementById('btn-start').disabled = true;
+}
+if (endMs) {
+  const t = new Date(endMs);
+  document.getElementById('end-disp').textContent = hhmm(t);
+  document.getElementById('btn-end').disabled = true;
+}
+if (startMs && endMs) showWorkHours();
+
+// ── メモ・選択状態 ──
+const KEY_MEMO = 'kinntai_memo_'+TODAY;
+const KEY_CHOICE = 'kinntai_choice_'+TODAY;
+let memoData = JSON.parse(localStorage.getItem(KEY_MEMO)||'{}');
+let choiceData = JSON.parse(localStorage.getItem(KEY_CHOICE)||'{}');
+if (memoData.text) document.getElementById('memo').value = memoData.text;
+let choiceReq = choiceData.req || null;
+let choiceWay = choiceData.way || null;
+if (choiceReq) applyChoice('req', choiceReq);
+if (choiceWay) applyChoice('way', choiceWay);
+
+// ── 履歴 ──
+const KEY_HISTORY = 'kinntai_history_'+YM;
+let history = JSON.parse(localStorage.getItem(KEY_HISTORY)||'[]');
+renderHistory();
+
+// ── 関数群 ──
+function hhmm(date) {
+  return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+}
+
+function stamp(type) {
+  const now = new Date();
+  if (type === 'start') {
+    startMs = now.getTime();
+    document.getElementById('start-disp').textContent = hhmm(now);
+    document.getElementById('btn-start').disabled = true;
+  } else {
+    endMs = now.getTime();
+    document.getElementById('end-disp').textContent = hhmm(now);
+    document.getElementById('btn-end').disabled = true;
+  }
+  stampData = { startMs, endMs };
+  localStorage.setItem(KEY_STAMP, JSON.stringify(stampData));
+  if (startMs && endMs && endMs > startMs) {
+    showWorkHours();
+    saveToHistory();
+  }
+}
+
+function showWorkHours() {
+  const diff = endMs - startMs;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  document.getElementById('work-hours').textContent = h + ' 時間 ' + m + ' 分';
+}
+
+function saveToHistory() {
+  const diff = endMs - startMs;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const label = (d.getMonth()+1)+'/'+(d.getDate());
+  // 同じ日付の記録を更新
+  const idx = history.findIndex(r => r.date === TODAY);
+  const record = { date: TODAY, label, startMs, endMs, h, m };
+  if (idx >= 0) history[idx] = record;
+  else history.push(record);
+  history.sort((a,b) => a.date.localeCompare(b.date));
+  localStorage.setItem(KEY_HISTORY, JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const ul = document.getElementById('history-list');
+  if (!history.length) {
+    ul.innerHTML = '<li style="color:#ba9b85; font-size:12px; justify-content:center;">まだ記録がないにゃ 🐾</li>';
+    document.getElementById('history-total').textContent = '';
+    return;
+  }
+  let totalMin = 0;
+  ul.innerHTML = history.map((r,i) => {
+    totalMin += r.h*60 + r.m;
+    const s = new Date(r.startMs), e = new Date(r.endMs);
+    return `<li>
+      <span>${r.label}（${hhmm(s)}〜${hhmm(e)}）</span>
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#d35400; font-weight:bold;">${r.h}h${r.m}m</span>
+        <button class="history-del" onclick="delHistory(${i})">✕</button>
+      </span>
+    </li>`;
+  }).join('');
+  const th = Math.floor(totalMin/60), tm = totalMin%60;
+  document.getElementById('history-total').textContent = `合計 ${th}h${tm}m`;
+}
+
+function delHistory(i) {
+  if (!confirm('この記録を削除しますか？')) return;
+  history.splice(i,1);
+  localStorage.setItem(KEY_HISTORY, JSON.stringify(history));
+  renderHistory();
+}
+
+function calcFromHistory() {
+  let totalMin = 0;
+  history.forEach(r => totalMin += r.h*60 + r.m);
+  const h = (totalMin/60).toFixed(1);
+  document.getElementById('total-hours').value = h;
+  calcWage();
+}
+
+function resetStamp() {
+  if (!confirm('今日の打刻をリセットしてもよろしいですか？')) return;
+  startMs = null; endMs = null;
+  stampData = {};
+  localStorage.removeItem(KEY_STAMP);
+  document.getElementById('start-disp').textContent = '--:--';
+  document.getElementById('end-disp').textContent = '--:--';
+  document.getElementById('work-hours').textContent = '-- 時間 -- 分';
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-end').disabled = false;
+  // 履歴からも今日分を削除
+  const idx = history.findIndex(r => r.date === TODAY);
+  if (idx >= 0) { history.splice(idx,1); localStorage.setItem(KEY_HISTORY, JSON.stringify(history)); renderHistory(); }
+}
+
+let memoTimer = null;
+function saveMemo() {
+  clearTimeout(memoTimer);
+  memoTimer = setTimeout(() => {
+    memoData.text = document.getElementById('memo').value;
+    localStorage.setItem(KEY_MEMO, JSON.stringify(memoData));
+    const badge = document.getElementById('memo-saved');
+    badge.classList.add('show');
+    setTimeout(() => badge.classList.remove('show'), 1500);
+  }, 600);
+}
+
+function setChoice(type, val) {
+  if (type === 'req') choiceReq = val;
+  else choiceWay = val;
+  applyChoice(type, val);
+  choiceData = { req: choiceReq, way: choiceWay };
+  localStorage.setItem(KEY_CHOICE, JSON.stringify(choiceData));
+}
+
+function applyChoice(type, val) {
+  if (type === 'req') {
+    document.getElementById('req-yes').className = 'choice-btn'+(val==='yes'?' active':'');
+    document.getElementById('req-no').className = 'choice-btn'+(val==='no'?' active':'');
+  } else {
+    document.getElementById('way-go').className = 'choice-btn'+(val==='go'?' active':'');
+    document.getElementById('way-home').className = 'choice-btn'+(val==='home'?' active':'');
+  }
+}
+
+function addDay(v) {
+  days = Math.max(0, days+v);
+  localStorage.setItem(KEY_DAYS, days);
+  document.getElementById('days-count').textContent = days;
+  updateSeikinn(); calcWage();
+}
+
+function resetDays() {
+  if (!confirm('本当に今月の通所日数をリセットしてもよろしいですか？🐾')) return;
+  days = 0; localStorage.setItem(KEY_DAYS, 0);
+  document.getElementById('days-count').textContent = 0;
+  updateSeikinn(); calcWage();
+}
+
+function updateSeikinn() {
+  const box = document.getElementById('seikinn-box');
+  const msg = document.getElementById('seikinn-msg');
+  if (days >= 15) {
+    box.className = 'seikinn-box seikinn-success';
+    msg.textContent = '精勤手当あり！ +5,000円 🐱';
+  } else {
+    box.className = 'seikinn-box seikinn-warning';
+    msg.textContent = 'あと '+(15-days)+' 日で精勤手当 +5,000円 🐾';
+  }
+}
+
+function fmt(n) { return n.toLocaleString()+' 円'; }
+
+function calcWage() {
+  const h = parseFloat(document.getElementById('total-hours').value)||0;
+  const m = parseInt(document.getElementById('meals').value)||0;
+  const unitPrice = parseInt(document.getElementById('food-unit-price').value)||550;
+  const base = Math.round(h * 1140);
+  const bonus = days >= 15 ? 5000 : 0;
+  const food = m * unitPrice;
+  const total = Math.max(0, base + bonus - food);
+  document.getElementById('w-base').textContent = h > 0 ? fmt(base) : '--';
+  document.getElementById('w-bonus').textContent = fmt(bonus);
+  document.getElementById('w-food').textContent = m > 0 ? '- '+fmt(food) : '--';
+  document.getElementById('w-total').textContent = h > 0 ? fmt(total) : '-- 円';
+}
+</script>
+</body>
+</html>
