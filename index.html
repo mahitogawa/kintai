@@ -94,7 +94,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     <p style="font-size:48px; margin:0 0 10px;">🐾</p>
     <p style="font-size:19px; font-weight:bold; color:#ff9f43; margin:0 0 4px;">ワンダーワークIT池下</p>
     <p style="font-size:14px; color:#ba9b85; font-weight:bold; margin:0 0 20px;">合言葉を入れてにゃ</p>
-    <input type="password" id="pw-input" maxlength="5" placeholder="● ● ● ● ●"
+    <input type="password" id="pw-input" maxlength="4" placeholder="● ● ● ●"
       style="text-align:center; font-size:28px; letter-spacing:12px;"
       oninput="checkPw()" onkeydown="if(event.key==='Enter')checkPw()">
     <p id="pw-error" style="font-size:13px; color:#d35400; min-height:18px; margin:4px 0 0; font-weight:bold;"></p>
@@ -307,8 +307,8 @@ function checkPw() {
   const v = document.getElementById('pw-input').value;
   const err = document.getElementById('pw-error');
   err.textContent = '';
-  if (v.length === 5) {
-    if (v.slice(1) === PW || v.slice(0,4) === PW) { sessionStorage.setItem('logged_in','yes'); unlock(); }
+  if (v.length === 4) {
+    if (v === PW) { sessionStorage.setItem('logged_in','yes'); unlock(); }
     else { err.textContent = 'パスワードが違うにゃ ✖'; document.getElementById('pw-input').value = ''; }
   }
 }
