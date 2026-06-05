@@ -147,6 +147,19 @@ textarea { height: 70px; resize: none; }
 </style>
 </head>
 <body>
+
+<!-- パスワード画面 -->
+<div id="lock-screen" style="position:fixed;inset:0;background:#fbf8f3;display:flex;align-items:center;justify-content:center;z-index:9999;padding:1rem;">
+  <div style="background:#fff;border:1px solid #eaddca;border-radius:20px;padding:2rem 1.5rem;max-width:320px;width:100%;text-align:center;box-shadow:0 4px 20px rgba(139,94,60,0.1);">
+    <p style="font-size:40px;margin:0 0 8px;">🐾</p>
+    <p style="font-size:18px;font-weight:bold;color:#ff9f43;margin:0 0 4px;">ワンダーワークIT池下</p>
+    <p style="font-size:13px;color:#ba9b85;font-weight:bold;margin:0 0 24px;">パスワードを入力してにゃ</p>
+    <input type="password" id="pw-input" maxlength="10" placeholder="パスワード" style="width:100%;padding:14px;font-size:22px;text-align:center;border:2px solid #eaddca;border-radius:12px;letter-spacing:8px;margin-bottom:10px;font-family:inherit;" oninput="checkPw(false)" onkeydown="if(event.key==='Enter')checkPw(true)">
+    <p id="pw-error" style="font-size:12px;color:#d35400;min-height:16px;margin:0 0 12px;font-weight:bold;"></p>
+    <button onclick="checkPw(true)" style="width:100%;padding:13px;background:#ff9f43;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;">ログインにゃ 🐾</button>
+  </div>
+</div>
+<div id="app" style="display:none;">
 <div class="container">
 
   <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
@@ -280,7 +293,34 @@ textarea { height: 70px; resize: none; }
   </div>
 
 </div>
+</div>
 <script>
+// ── パスワード認証 ──
+const CORRECT_PW = "8888";
+const SESSION_KEY = "kinntai_auth";
+if (sessionStorage.getItem(SESSION_KEY) === "ok") unlock();
+
+function checkPw(submit) {
+  const val = document.getElementById("pw-input").value;
+  const err = document.getElementById("pw-error");
+  if (val === CORRECT_PW) {
+    sessionStorage.setItem(SESSION_KEY, "ok");
+    unlock();
+  } else if (submit) {
+    err.textContent = "パスワードが違うにゃ ✖";
+    document.getElementById("pw-input").value = "";
+  } else {
+    err.textContent = "";
+  }
+}
+
+function unlock() {
+  document.getElementById("lock-screen").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  init();
+}
+
+function init() {
 const d = new Date();
 const YM = d.getFullYear()+'_'+(d.getMonth()+1);
 const TODAY = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
@@ -330,6 +370,8 @@ let history = JSON.parse(localStorage.getItem(KEY_HISTORY)||'[]');
 renderHistory();
 
 // ── 関数群 ──
+} // end init
+
 function hhmm(date) {
   return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
 }
