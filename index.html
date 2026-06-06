@@ -199,20 +199,21 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     <div class="card">
       <div class="acc-header">
         <p class="sec-label" style="margin:0;"><i class="ti ti-notebook"></i> 業務連絡ノート</p>
-        <div style="display:flex;align-items:center;gap:8px;"><span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div>
       </div>
-      <div class="acc-body open">
+      <div class="acc-body closed">
       <label>小川さんからの申し伝え</label>
       <textarea id="memo" placeholder="例：今日は集中して作業できました！" oninput="saveMemo()"></textarea>
       <label>職員からの伝言</label>
       <textarea id="staff-memo" placeholder="職員さんが記入するエリアにゃ" oninput="saveField('staff_memo', this.value)"></textarea>
       <label>お休みメモ</label>
       <textarea id="schedule-memo" placeholder="お休みの予定など" oninput="saveField('schedule_memo', this.value)" style="margin-bottom:0;"></textarea>
+      </div>
     </div>
 
     <!-- 土曜レク -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
+      <div class="acc-header"><p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div><div class="acc-body closed">
       <label>参加可否</label>
       <div class="choice-grid">
         <div class="choice-btn" id="req-yes" onclick="setChoice('req','yes')">参加</div>
@@ -223,6 +224,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
         <div class="choice-btn" id="way-go"   onclick="setChoice('way','go')">通所</div>
         <div class="choice-btn" id="way-home" onclick="setChoice('way','home')">在宅</div>
       </div>
+    </div>
     </div>
 
     <!-- 通所日数 -->
@@ -246,7 +248,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 工賃計算 -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed">
+      <div class="acc-header"><p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed">
       <div style="display:flex; gap:10px; margin-bottom:12px; align-items:flex-end;">
         <div style="flex:1;">
           <label style="margin-bottom:4px;">今月の合計時間</label>
@@ -272,7 +274,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 勤務履歴 -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed"><div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+      <div class="acc-header"><p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed"><div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
         <button id="btn-clear-history" style="font-size:16px; padding:8px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-weight:bold; cursor:pointer;">履歴を全消去</button>
       </div>
       <div id="history-list" style="font-size:18px; line-height:1.8; max-height:160px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:10px;"></div>
@@ -281,7 +283,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- チャット広場 -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meetに送る</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
+      <div class="acc-header"><p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meetに送る</p><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div><div class="acc-body closed">
       <label style="margin-bottom:4px;">お休みメモ</label>
       <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
       <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" style="display:block; text-align:center; padding:14px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:18px; margin-bottom:0.5rem; text-decoration:none;">
@@ -321,9 +323,6 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
   <div id="view-admin" style="display:none;">
     <button onclick="switchView('main')" style="display:block; width:100%; padding:18px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:20px; margin-bottom:0.3rem; cursor:pointer;">
       <i class="ti ti-arrow-left" style="margin-right:6px;"></i>タイムカード画面に戻るにゃ
-    </button>
-    <button onclick="switchView('admin')" style="display:block; width:100%; padding:14px; background:#FCEBEB; color:#791F1F; border-radius:16px; border:2px solid #F09595; font-weight:bold; font-size:16px; margin-bottom:0.3rem; cursor:pointer;">
-      <i class="ti ti-shield" style="margin-right:6px;"></i>スタッフ管理画面（打刻修正）
     </button>
     <div class="card">
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
@@ -467,11 +466,12 @@ function initFields() {
   document.getElementById('end-disp').textContent   = '--:--';
   document.getElementById('work-hours').textContent  = '-- 時間 -- 分';
   const sb = document.getElementById('start-btn'); sb.disabled = false; sb.textContent = '開始時刻を打刻';
-  const eb = document.getElementById('end-btn');   eb.disabled = false; eb.textContent = '終業時間を打刻';
+  const eb = document.getElementById('end-btn');   eb.disabled = true;  eb.textContent = '終業時間を打刻';
   const rb = document.getElementById('reg-btn');   rb.disabled = true;  rb.textContent = '今日のデータを登録するにゃ！ 🐾';
   document.getElementById('paw-area').innerHTML = '';
   document.getElementById('mood-good').className = 'choice-btn';
   document.getElementById('mood-bad').className  = 'choice-btn';
+  document.getElementById('mood-mid').className  = 'choice-btn';
 }
 
 function lockBtn(id) { const b=document.getElementById(id); b.disabled=true; b.textContent='打刻済み🐾'; }
