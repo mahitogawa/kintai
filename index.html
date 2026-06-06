@@ -316,6 +316,28 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     </div>
 
   </div>
+
+  <!-- ===== 画面C: 管理者 ===== -->
+  <div id="view-admin" style="display:none;">
+    <button onclick="switchView('main')" style="display:block; width:100%; padding:18px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:20px; margin-bottom:0.3rem; cursor:pointer;">
+      <i class="ti ti-arrow-left" style="margin-right:6px;"></i>タイムカード画面に戻るにゃ
+    </button>
+    <button onclick="switchView('admin')" style="display:block; width:100%; padding:14px; background:#FCEBEB; color:#791F1F; border-radius:16px; border:2px solid #F09595; font-weight:bold; font-size:16px; margin-bottom:0.3rem; cursor:pointer;">
+      <i class="ti ti-shield" style="margin-right:6px;"></i>スタッフ管理画面（打刻修正）
+    </button>
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
+      <p style="font-size:15px; color:#ba9b85; margin:0 0 16px; font-weight:bold;">打刻時刻の修正ができるにゃ🐾</p>
+      <label>開始時刻を修正（例：09:00）</label>
+      <input type="time" id="admin-start" style="margin-bottom:12px;">
+      <label>終業時刻を修正（例：17:00）</label>
+      <input type="time" id="admin-end" style="margin-bottom:16px;">
+      <button onclick="adminSave()" style="width:100%; padding:14px; border-radius:12px; border:2px solid #1a4008; background:#2e7d0e; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">
+        <i class="ti ti-check" style="margin-right:6px;"></i>修正を保存するにゃ
+      </button>
+      <div id="admin-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center;"></div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -331,6 +353,55 @@ function initAccordion() {
       header.querySelector('.acc-icon').style.transform = isOpen ? '' : 'rotate(180deg)';
     });
   });
+}
+
+
+// ===== 管理者画面 =====
+function loadAdminTime() {
+  const saved = JSON.parse(localStorage.getItem(window._KEY_STAMP)||'null');
+  if (saved && saved.startMs) {
+    const s = new Date(saved.startMs);
+    document.getElementById('admin-start').value =
+      String(s.getHours()).padStart(2,'0')+':'+String(s.getMinutes()).padStart(2,'0');
+  }
+  if (saved && saved.endMs) {
+    const e = new Date(saved.endMs);
+    document.getElementById('admin-end').value =
+      String(e.getHours()).padStart(2,'0')+':'+String(e.getMinutes()).padStart(2,'0');
+  }
+}
+
+function adminSave() {
+  const startVal = document.getElementById('admin-start').value;
+  const endVal   = document.getElementById('admin-end').value;
+  const msg = document.getElementById('admin-msg');
+  if (!startVal && !endVal) {
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent='時刻を入力してにゃ🐾'; return;
+  }
+  const today = new Date();
+  let startMs = null, endMs = null;
+  if (startVal) {
+    const [h,m] = startVal.split(':');
+    const dt = new Date(today); dt.setHours(parseInt(h), parseInt(m), 0, 0);
+    startMs = dt.getTime();
+    window._startMs = startMs;
+    document.getElementById('start-disp').textContent = startVal;
+    const sb = document.getElementById('start-btn'); sb.disabled=true; sb.textContent='打刻済み🐾';
+  }
+  if (endVal) {
+    const [h,m] = endVal.split(':');
+    const dt = new Date(today); dt.setHours(parseInt(h), parseInt(m), 0, 0);
+    endMs = dt.getTime();
+    window._endMs = endMs;
+    document.getElementById('end-disp').textContent = endVal;
+    const eb = document.getElementById('end-btn'); eb.disabled=true; eb.textContent='打刻済み🐾';
+    const sb = document.getElementById('start-btn'); sb.disabled=true; sb.textContent='打刻済み🐾';
+  }
+  localStorage.setItem(window._KEY_STAMP, JSON.stringify({startMs: window._startMs, endMs: window._endMs}));
+  if (window._startMs && window._endMs && window._endMs > window._startMs) showWorkHours();
+  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
+  msg.textContent='✅ 修正を保存したにゃ！';
 }
 
 // ===== 初期化 =====
@@ -373,8 +444,10 @@ const nm = new Date(d.getFullYear(), d.getMonth()+1, 20);
 document.getElementById('w-paydate').textContent = (nm.getMonth()+1)+'月20日';
 
 function switchView(v) {
-  document.getElementById('view-main').style.display = v==='main'?'block':'none';
-  document.getElementById('view-sub').style.display  = v==='sub' ?'block':'none';
+  document.getElementById('view-main').style.display  = v==='main' ?'block':'none';
+  document.getElementById('view-sub').style.display   = v==='sub'  ?'block':'none';
+  document.getElementById('view-admin').style.display = v==='admin'?'block':'none';
+  if (v==='admin') loadAdminTime();
   window.scrollTo(0,0);
 }
 
@@ -655,6 +728,8 @@ if (saved) {
     window._endMs=saved.endMs;
     document.getElementById('end-disp').textContent=hhmm(new Date(saved.endMs));
     lockBtn('end-btn');
+    lockBtn('start-btn');
+    document.getElementById('end-btn').disabled=true;
   }
   if (saved.startMs && saved.endMs && saved.endMs>saved.startMs) showWorkHours();
 }
