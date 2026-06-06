@@ -199,9 +199,9 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     <div class="card">
       <div class="acc-header">
         <p class="sec-label" style="margin:0;"><i class="ti ti-notebook"></i> 業務連絡ノート</p>
-        <div style="display:flex;align-items:center;gap:8px;"><span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div>
       </div>
-      <div class="acc-body closed">
+      <div class="acc-body open">
       <label>小川さんからの申し伝え</label>
       <textarea id="memo" placeholder="例：今日は集中して作業できました！" oninput="saveMemo()"></textarea>
       <label>職員からの伝言</label>
@@ -212,7 +212,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 土曜レク -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div><div class="acc-body closed">
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
       <label>参加可否</label>
       <div class="choice-grid">
         <div class="choice-btn" id="req-yes" onclick="setChoice('req','yes')">参加</div>
@@ -281,7 +281,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- チャット広場 -->
     <div class="card">
-      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meetに送る</p><i class="ti ti-chevron-down acc-icon" style="" aria-hidden="true"></i></div><div class="acc-body closed">
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meetに送る</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
       <label style="margin-bottom:4px;">お休みメモ</label>
       <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
       <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" style="display:block; text-align:center; padding:14px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:18px; margin-bottom:0.5rem; text-decoration:none;">
