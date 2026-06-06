@@ -121,7 +121,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     <!-- ヘッダー -->
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; min-height:64px;">
-        <span style="font-size:19px; font-weight:bold; color:#ff9f43;"><i class="ti ti-paw"></i> 勤怠打刻 🐾</span>
+        <span style="font-size:19px; font-weight:bold; color:#ff9f43;">勤怠打刻</span>
         <span style="font-size:32px; color:#d35400; font-weight:bold; display:flex; align-items:center;" id="today-label"></span>
       </div>
       <p style="font-size:13px; color:#ba9b85; margin:4px 0 0; font-weight:bold;">ワンダーワークIT池下</p>
@@ -305,7 +305,7 @@ const lastVisit = localStorage.getItem('last_visit_date');
 if (lastVisit !== todayStr) { clearTodayData(); localStorage.setItem('last_visit_date', todayStr); }
 
 // ===== パスワード =====
-const PW = '8888';
+const PW = 'gggg';
 if (sessionStorage.getItem('logged_in') === 'yes') unlock();
 
 function checkPw() {
