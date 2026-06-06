@@ -151,6 +151,9 @@ textarea { height: 88px; resize: none; }
 input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 
 /* ===== アコーディオン ===== */
+.acc-header.active { background: #ff9f43; border-radius: 10px; padding: 8px 10px; margin-bottom: 4px; }
+.acc-header.active .sec-label { color: #fff; }
+.acc-header.active .acc-icon { color: #fff; }
 .acc-header {
   display: flex; justify-content: space-between; align-items: center;
   cursor: pointer; user-select: none; padding: 4px 0; margin: 0;
@@ -301,7 +304,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     <button onclick="switchView('main')" class="nav-btn">
       <i class="ti ti-arrow-left" style="margin-right:6px;"></i>🚪 タイムカード画面に戻るにゃ
     </button>
-
     <!-- 通所日数（常時表示） -->
     <div class="card">
       <p class="sec-label"><i class="ti ti-calendar"></i> 今月の通所日数</p>
@@ -449,6 +451,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       </div>
     </div>
 
+    <button onclick="switchView('admin')" style="display:block; width:100%; padding:14px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:16px; margin-bottom:0.3rem; cursor:pointer;">
+      <i class="ti ti-shield" style="margin-right:6px;"></i>スタッフ管理画面（打刻修正）
+    </button>
   </div>
 
   <!-- ===== 画面C: 管理者 ===== -->
@@ -487,6 +492,7 @@ function initAccordion() {
       const icon = header.querySelector('.acc-icon');
       if (icon) icon.style.transform = isOpen ? '' : 'rotate(180deg)';
       if (toggleText) toggleText.textContent = isOpen ? '開く' : '閉じる';
+      header.classList.toggle('active', !isOpen);
     });
   });
 }
