@@ -446,14 +446,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div id="sub-reg-msg" style="display:none; margin-top:8px; padding:10px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center;"></div>
     </div>
 
-    <!-- リセット系（目立たず下部） -->
-    <div class="card" style="padding:14px; background:#fff8f8; border-color:#f5c6c6;">
-      <p style="font-size:12px; color:#ba9b85; font-weight:bold; margin-bottom:10px; text-align:center;">⚠️ データの削除・リセットはここから</p>
-      <div class="grid2">
-        <button onclick="resetDays()" style="padding:12px; border-radius:10px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">通所日数リセット</button>
-        <button id="btn-clear-history2" style="padding:12px; border-radius:10px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
-      </div>
-    </div>
+    
 
     <button onclick="switchView('admin')" style="display:block; width:100%; padding:14px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:16px; margin-bottom:0.3rem; cursor:pointer;">
       <i class="ti ti-shield" style="margin-right:6px;"></i>スタッフ管理画面（打刻修正）
@@ -476,6 +469,14 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <i class="ti ti-check" style="margin-right:6px;"></i>修正を保存するにゃ
       </button>
       <div id="admin-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center;"></div>
+    </div>
+
+    <div class="card">
+      <p class="sec-label"><i class="ti ti-trash"></i> データの削除・リセット</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button onclick="resetDays()" style="padding:14px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">通所日数リセット</button>
+        <button onclick="clearHistory()" style="padding:14px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
+      </div>
     </div>
   </div>
 </div>
@@ -528,6 +529,14 @@ function submitFromSub() {
 }
 
 // ===== 管理者画面 =====
+function clearHistory() {
+  if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？🐾')) {
+    localStorage.removeItem(window._KEY_HISTORY);
+    renderHistory();
+    alert('履歴を消去したにゃ！🐾');
+  }
+}
+
 function loadAdminTime() {
   const saved = JSON.parse(localStorage.getItem(window._KEY_STAMP)||'null');
   if (saved && saved.startMs) {
@@ -871,10 +880,12 @@ function deleteHistory(i) {
   if (!confirm('この記録を削除しますか？')) return;
   let hist=getHistory(); hist.splice(i,1); localStorage.setItem(window._KEY_HISTORY,JSON.stringify(hist)); renderHistory();
 }
-document.getElementById('btn-clear-history2').onclick=()=>{
+const btnClearHistory2 = document.getElementById('btn-clear-history2');
+if (btnClearHistory2) btnClearHistory2.onclick=()=>{
   if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？🐾')) { localStorage.removeItem(window._KEY_HISTORY); renderHistory(); }
 };
-document.getElementById('btn-clear-history').onclick=()=>{
+const btnClearHistory = document.getElementById('btn-clear-history');
+if (btnClearHistory) btnClearHistory.onclick=()=>{
   if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？🐾')) { localStorage.removeItem(window._KEY_HISTORY); renderHistory(); }
 };
 document.getElementById('btn-calc-history').onclick=()=>{
