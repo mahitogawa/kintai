@@ -74,6 +74,17 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 .jumping-paw:nth-child(2){animation-delay:.1s} .jumping-paw:nth-child(3){animation-delay:.2s}
 .jumping-paw:nth-child(4){animation-delay:.3s} .jumping-paw:nth-child(5){animation-delay:.4s}
 
+
+.acc-header {
+  display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer; user-select:none; padding:0; margin:0;
+}
+.acc-header .sec-label { margin:0; }
+.acc-icon { font-size:18px; color:#ba9b85; transition:transform 0.2s; }
+.acc-body { overflow:hidden; transition:max-height 0.3s ease; }
+.acc-body.closed { max-height:0; }
+.acc-body.open { max-height:2000px; }
+
 /* ダークモード */
 @media (prefers-color-scheme: dark) {
   body { background: #1e1814; color: #f5ebe6; }
@@ -186,10 +197,11 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 連絡ノート -->
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <div class="acc-header">
         <p class="sec-label" style="margin:0;"><i class="ti ti-notebook"></i> 業務連絡ノート</p>
-        <span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span>
+        <div style="display:flex;align-items:center;gap:8px;"><span id="save-badge" style="font-size:11px; color:#1a4008; font-weight:bold; display:none;">保存済み ✓</span><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div>
       </div>
+      <div class="acc-body open">
       <label>小川さんからの申し伝え</label>
       <textarea id="memo" placeholder="例：今日は集中して作業できました！" oninput="saveMemo()"></textarea>
       <label>職員からの伝言</label>
@@ -200,7 +212,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 土曜レク -->
     <div class="card">
-      <p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p>
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calendar-event"></i> 土曜レク入力</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
       <label>参加可否</label>
       <div class="choice-grid">
         <div class="choice-btn" id="req-yes" onclick="setChoice('req','yes')">参加</div>
@@ -234,7 +246,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 工賃計算 -->
     <div class="card">
-      <p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算（ごほうびおやつ）</p>
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-calculator"></i> 工賃計算</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed">
       <div style="display:flex; gap:10px; margin-bottom:12px; align-items:flex-end;">
         <div style="flex:1;">
           <label style="margin-bottom:4px;">今月の合計時間</label>
@@ -260,11 +272,28 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 
     <!-- 勤務履歴 -->
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p>
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label" style="margin:0;"><i class="ti ti-history"></i> 今月の勤務履歴</p><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div><div class="acc-body closed"><div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
         <button id="btn-clear-history" style="font-size:16px; padding:8px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-weight:bold; cursor:pointer;">履歴を全消去</button>
       </div>
       <div id="history-list" style="font-size:18px; line-height:1.8; max-height:160px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:10px;"></div>
+    </div>
+
+
+    <!-- チャット広場 -->
+    <div class="card">
+      </div></div><div class="card"><div class="acc-header"><p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meetに送る</p><i class="ti ti-chevron-down acc-icon" style="transform:rotate(180deg);" aria-hidden="true"></i></div><div class="acc-body open">
+      <label style="margin-bottom:4px;">お休みメモ</label>
+      <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
+      <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" style="display:block; text-align:center; padding:14px; background:#E6F1FB; color:#0C447C; border-radius:16px; border:2px solid #B5D4F4; font-weight:bold; font-size:18px; margin-bottom:0.5rem; text-decoration:none;">
+        <i class="ti ti-video" aria-hidden="true" style="margin-right:6px;"></i>Google Meetに参加する
+      </a>
+      <button onclick="copyToMeet()" style="width:100%; padding:14px; border-radius:12px; border:2px solid #ff9f43; background:#ffecd9; color:#d35400; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:0.5rem;">
+        <i class="ti ti-clipboard" aria-hidden="true" style="margin-right:6px;"></i>Meetチャットにコピーするにゃ🐾
+      </button>
+      <div id="meet-copy-result" style="display:none; padding:12px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center; margin-bottom:8px;">
+        ✅ コピーしました！Meetのチャットに貼り付けてにゃ🐾
+      </div>
+      <div id="meet-copy-preview" style="display:none; padding:12px; border-radius:10px; border:1px dashed #ff9f43; background:#f7f0e8; font-size:14px; white-space:pre-line; line-height:1.8; color:#2c1d11;"></div>
     </div>
 
     <!-- リセット・全消去ボタン横並び -->
@@ -291,6 +320,19 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
 </div>
 
 <script>
+
+function initAccordion() {
+  document.querySelectorAll('.acc-header').forEach(header => {
+    const body = header.nextElementSibling;
+    header.addEventListener('click', () => {
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      body.classList.toggle('closed', isOpen);
+      header.querySelector('.acc-icon').style.transform = isOpen ? '' : 'rotate(180deg)';
+    });
+  });
+}
+
 // ===== 初期化 =====
 const d = new Date();
 window._prefix  = d.getFullYear()+'_'+(d.getMonth()+1)+'_';
@@ -474,6 +516,39 @@ function saveMemo() {
 function saveField(key,val) { localStorage.setItem(window._prefix+key, val); }
 
 
+
+// ===== Meetコピー =====
+function copyToMeet() {
+  const d = new Date();
+  const moodMap = { good:'○', bad:'×', mid:'―' };
+  const mood = moodMap[window._selectedMood] || '未選択';
+  const start = document.getElementById('start-disp').textContent;
+  const end   = document.getElementById('end-disp').textContent;
+  const req   = localStorage.getItem(todayStr+'_choice_req')==='yes'?'参加':'不参加';
+  const way   = localStorage.getItem(todayStr+'_choice_way')==='go'?'通所':'在宅';
+  const yasumi = document.getElementById('yasumi-memo').value || 'なし';
+  const text = [
+    '【チャット広場 報告】',
+    '📅 '+(d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）',
+    '━━━━━━━━━━━━',
+    '体調：'+mood,
+    '開始：'+start+'　終了：'+end,
+    '━━━━━━━━━━━━',
+    '土曜レク：'+req+'　参加方法：'+way,
+    'お休みメモ：'+yasumi,
+  ].join('\n');
+  const preview = document.getElementById('meet-copy-preview');
+  const result  = document.getElementById('meet-copy-result');
+  preview.style.display = 'block';
+  preview.textContent = text;
+  navigator.clipboard.writeText(text).then(() => {
+    result.style.display = 'block';
+  }).catch(() => {
+    result.style.display = 'block';
+    result.textContent = '上のテキストを手動でコピーしてにゃ';
+  });
+}
+
 // ===== コピー =====
 function copyAll() {
   const moodMap = { good:'😊 ○', bad:'😔 ×', mid:'😐 ―' };
@@ -570,8 +645,17 @@ document.getElementById('days-count').textContent = window._days;
 
 const saved=JSON.parse(localStorage.getItem(window._KEY_STAMP)||'null');
 if (saved) {
-  if (saved.startMs) { window._startMs=saved.startMs; document.getElementById('start-disp').textContent=hhmm(new Date(saved.startMs)); lockBtn('start-btn'); }
-  if (saved.endMs)   { window._endMs  =saved.endMs;   document.getElementById('end-disp').textContent  =hhmm(new Date(saved.endMs));   lockBtn('end-btn');   }
+  if (saved.startMs) {
+    window._startMs=saved.startMs;
+    document.getElementById('start-disp').textContent=hhmm(new Date(saved.startMs));
+    lockBtn('start-btn');
+    document.getElementById('end-btn').disabled=false;
+  }
+  if (saved.endMs) {
+    window._endMs=saved.endMs;
+    document.getElementById('end-disp').textContent=hhmm(new Date(saved.endMs));
+    lockBtn('end-btn');
+  }
   if (saved.startMs && saved.endMs && saved.endMs>saved.startMs) showWorkHours();
 }
 const savedMood=localStorage.getItem(todayStr+'_choice_mood');
@@ -589,8 +673,9 @@ document.getElementById('meals').value         = localStorage.getItem(window._pr
 document.getElementById('food-unit-price').value = localStorage.getItem(window._prefix+'food_price')||'550';
 
 setChoiceVisual('req', localStorage.getItem(todayStr+'_choice_req'));
+document.getElementById('yasumi-memo').value = localStorage.getItem(window._prefix+'yasumi_memo')||'';
 setChoiceVisual('way', localStorage.getItem(todayStr+'_choice_way'));
-updateSeikinn(); calcWage(); renderHistory();
+updateSeikinn(); calcWage(); renderHistory(); initAccordion();
 </script>
 </body>
 </html>
