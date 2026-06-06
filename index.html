@@ -152,10 +152,10 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
         <div class="stamp-block">
           <p style="font-size:20px; color:#d32f2f; font-weight:bold; margin:0 0 6px;">終業時刻</p>
           <p class="stamp-time" id="end-disp">--:--</p>
-          <button class="btn btn-close" id="end-btn" onclick="stamp('end')">終業時間を打刻</button>
+          <button class="btn btn-close" id="end-btn" onclick="stamp('end')" disabled>終業時間を打刻</button>
         </div>
       </div>
-      <p style="font-size:11px; color:#ba9b85; margin-top:8px; text-align:center; font-weight:bold;">※打刻後は変更できません</p>
+      <p style="font-size:16px; color:#ba9b85; margin-top:8px; text-align:center; font-weight:bold;">※打刻後は変更できません</p>
       <div class="work-total">
         <p style="font-size:12px; color:#7c5a43; margin:0 0 2px; font-weight:bold;">今日の勤務時間</p>
         <p style="font-size:22px; font-weight:bold; color:#d35400;" id="work-hours">-- 時間 -- 分</p>
@@ -365,7 +365,7 @@ function lockBtn(id) { const b=document.getElementById(id); b.disabled=true; b.t
 
 function stamp(type) {
   const now = new Date();
-  if (type==='start') { window._startMs=now.getTime(); document.getElementById('start-disp').textContent=hhmm(now); lockBtn('start-btn'); }
+  if (type==='start') { window._startMs=now.getTime(); document.getElementById('start-disp').textContent=hhmm(now); lockBtn('start-btn'); document.getElementById('end-btn').disabled=false; }
   else                { window._endMs  =now.getTime(); document.getElementById('end-disp').textContent  =hhmm(now); lockBtn('end-btn');   }
   localStorage.setItem(window._KEY_STAMP, JSON.stringify({startMs:window._startMs, endMs:window._endMs}));
   if (window._startMs && window._endMs && window._endMs>window._startMs) showWorkHours();
