@@ -152,7 +152,7 @@ input[type="number"]:focus, textarea:focus { outline: none; border-color: #ff9f4
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
         <p class="sec-label" style="margin:0;"><i class="ti ti-clock"></i> 時刻打刻</p>
-        <button class="reset-btn" onclick="forceClear()">最初から直す</button>
+        
       </div>
       <div class="grid2">
         <div class="stamp-block">
@@ -433,8 +433,6 @@ function checkPw() {
 function unlock() {
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  clearTodayData();
-  initFields();
 }
 
 // ===== 表示 =====
@@ -729,7 +727,6 @@ if (saved) {
     document.getElementById('end-disp').textContent=hhmm(new Date(saved.endMs));
     lockBtn('end-btn');
     lockBtn('start-btn');
-    document.getElementById('end-btn').disabled=true;
   }
   if (saved.startMs && saved.endMs && saved.endMs>saved.startMs) showWorkHours();
 }
