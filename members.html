@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>利用者管理 | ワンダーワークIT池下</title>
+<style>
+:root {
+  --bg: #1a1108;
+  --bg2: #221a0e;
+  --card: #2a1f12;
+  --card2: #332818;
+  --border: #3d2e1a;
+  --orange: #ff9f43;
+  --orange2: #e8892e;
+  --red: #e74c3c;
+  --green: #2e7d0e;
+  --text: #f5ebe6;
+  --text-sub: #ba9b85;
+  --text-dim: #6b5040;
+  --shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; font-size: 16px; }
+body { display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; min-height: 100%; }
+
+/* ヘッダー */
+.app-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: calc(12px + env(safe-area-inset-top));
+}
+.app-header-title { font-size: 15px; font-weight: bold; color: var(--orange); display: flex; align-items: center; gap: 6px; }
+.app-header-sub { font-size: 12px; color: var(--text-sub); }
+
+/* コンテナ */
+.container { padding: 16px; flex: 1; }
+
+/* カード */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* セクションラベル */
+.sec-label {
+  font-size: 13px; font-weight: bold; color: var(--text-sub);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0.05em;
+}
+
+/* ボタン */
+.btn-primary {
+  width: 100%; padding: 16px; border-radius: 12px; border: none;
+  background: var(--orange); color: #1a1108;
+  font-size: 16px; font-weight: bold; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:active { opacity: 0.8; }
+.btn-secondary {
+  width: 100%; padding: 14px; border-radius: 12px;
+  border: 2px solid var(--border); background: var(--card2); color: var(--text-sub);
+  font-size: 15px; font-weight: bold; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-secondary:active { opacity: 0.8; }
+.btn-danger {
+  padding: 10px 16px; border-radius: 8px;
+  border: 2px solid var(--red); background: var(--red); color: #fff;
+  font-size: 14px; font-weight: bold; cursor: pointer;
+}
+.btn-edit {
+  padding: 8px 14px; border-radius: 8px;
+  border: 2px solid var(--orange); background: transparent; color: var(--orange);
+  font-size: 13px; font-weight: bold; cursor: pointer;
+}
+
+/* フォーム */
+label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 6px; font-weight: bold; }
+input, select, textarea {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-size: 15px;
+  font-family: inherit; outline: none; margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--orange); }
+select option { background: var(--card); }
+textarea { resize: none; }
+
+/* 検索バー */
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-wrap input { margin-bottom: 0; padding-left: 40px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 16px; }
+
+/* 利用者リスト */
+.member-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 14px;
+  background: var(--card2); border-radius: 12px;
+  margin-bottom: 8px; border: 1px solid var(--border);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.member-item:active { border-color: var(--orange); }
+.member-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: bold; color: #1a1108; flex-shrink: 0;
+}
+.member-info { flex: 1; min-width: 0; }
+.member-name { font-size: 16px; font-weight: bold; color: var(--text); }
+.member-meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+.member-arrow { color: var(--text-dim); font-size: 18px; }
+
+/* バッジ */
+.badge {
+  display: inline-block; padding: 3px 8px; border-radius: 20px;
+  font-size: 11px; font-weight: bold; margin-left: 6px;
+}
+.badge-active { background: #1a3d10; color: #6bcf54; }
+.badge-inactive { background: #3d1a1a; color: #e07070; }
+
+/* タブ */
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab {
+  flex: 1; padding: 10px; border-radius: 10px; border: none;
+  font-size: 14px; font-weight: bold; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+}
+.tab.active { background: var(--orange); color: #1a1108; }
+.tab.inactive { background: var(--card2); color: var(--text-sub); border: 1px solid var(--border); }
+
+/* 件数表示 */
+.count-label { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
+
+/* 詳細画面 */
+.detail-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-key { font-size: 13px; color: var(--text-sub); flex-shrink: 0; width: 90px; }
+.detail-val { font-size: 14px; color: var(--text); font-weight: 500; text-align: right; flex: 1; word-break: break-all; }
+
+/* メッセージ */
+.msg-box {
+  padding: 12px; border-radius: 8px;
+  font-size: 14px; font-weight: bold; text-align: center;
+  margin-top: 10px; display: none;
+}
+.msg-success { background: #1a3d10; color: #6bcf54; }
+.msg-error { background: #3d1a1a; color: #e07070; }
+
+/* 空状態 */
+.empty { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 15px; }
+
+/* ナビボタン */
+.nav-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  border: 2px solid #1e3a5f; background: #0c2340; color: #7cb9f4;
+  font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit;
+}
+
+/* 画面切り替え */
+.view { display: none; }
+.view.active { display: block; }
+
+/* フローティング追加ボタン */
+.fab {
+  position: fixed; bottom: calc(24px + env(safe-area-inset-bottom));
+  right: calc(50% - 240px + 16px);
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--orange); border: none; color: #1a1108;
+  font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(255,159,67,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 40; transition: transform 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+@media (max-width: 480px) { .fab { right: 16px; } }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-header-title">🐾 利用者管理</div>
+  <div class="app-header-sub">ワンダーワークIT池下</div>
+</div>
+
+<div class="container">
+
+  <!-- ===== トップ画面 ===== -->
+  <div id="view-top" class="view active">
+    <div class="card" style="text-align:center; padding:28px 16px;">
+      <div style="font-size:48px; margin-bottom:12px;">🐾</div>
+      <div style="font-size:20px; font-weight:bold; color:var(--orange); margin-bottom:6px;">利用者管理システム</div>
+      <div style="font-size:13px; color:var(--text-sub);">ワンダーワークIT池下</div>
+    </div>
+
+    <button class="btn-primary" style="margin-bottom:12px;" onclick="showView('view-new')">
+      ➕ 新規利用者を登録する
+    </button>
+    <button class="btn-secondary" onclick="showView('view-list')">
+      📋 登録情報を確認・修正する
+    </button>
+
+    <div style="margin-top:16px; padding:14px; background:var(--card); border-radius:12px; border:1px solid var(--border); text-align:center;">
+      <div style="font-size:13px; color:var(--text-sub); margin-bottom:4px;">登録利用者数</div>
+      <div id="top-count" style="font-size:32px; font-weight:bold; color:var(--orange);">0</div>
+      <div style="font-size:12px; color:var(--text-dim);">名</div>
+    </div>
+  </div>
+
+  <!-- ===== 新規登録画面 ===== -->
+  <div id="view-new" class="view">
+    <button class="nav-btn" onclick="showView('view-top')">← トップに戻る</button>
+    <div class="card">
+      <div class="sec-label">➕ 新規利用者登録</div>
+
+      <label>氏名 <span style="color:var(--red);">*</span></label>
+      <input type="text" id="new-name" placeholder="例：山田 太郎">
+
+      <label>フリガナ</label>
+      <input type="text" id="new-kana" placeholder="例：ヤマダ タロウ">
+
+      <label>生年月日</label>
+      <input type="date" id="new-birth">
+
+      <label>性別</label>
+      <select id="new-gender">
+        <option value="">選択してください</option>
+        <option value="男性">男性</option>
+        <option value="女性">女性</option>
+        <option value="その他">その他</option>
+        <option value="回答しない">回答しない</option>
+      </select>
+
+      <label>郵便番号</label>
+      <input type="text" id="new-zip" placeholder="例：460-0001" maxlength="8">
+
+      <label>住所</label>
+      <input type="text" id="new-addr" placeholder="例：愛知県名古屋市中区…">
+
+      <label>電話番号 <span style="color:var(--red);">*</span></label>
+      <input type="tel" id="new-tel" placeholder="例：090-0000-0000">
+
+      <label>緊急連絡先</label>
+      <input type="tel" id="new-emergency" placeholder="例：052-000-0000">
+
+      <label>緊急連絡先氏名</label>
+      <input type="text" id="new-emergency-name" placeholder="例：山田 花子（母）">
+
+      <label>障害種別</label>
+      <select id="new-disability">
+        <option value="">選択してください</option>
+        <option value="身体障害">身体障害</option>
+        <option value="知的障害">知的障害</option>
+        <option value="精神障害">精神障害</option>
+        <option value="発達障害">発達障害</option>
+        <option value="難病">難病</option>
+        <option value="その他">その他</option>
+      </select>
+
+      <label>備考・特記事項</label>
+      <textarea id="new-memo" rows="3" placeholder="配慮事項など…"></textarea>
+
+      <label>在籍状況</label>
+      <select id="new-status">
+        <option value="在籍中">在籍中</option>
+        <option value="休止中">休止中</option>
+        <option value="退所">退所</option>
+      </select>
+
+      <button class="btn-primary" onclick="saveNew()">💾 登録するにゃ🐾</button>
+      <div id="new-msg" class="msg-box"></div>
+    </div>
+  </div>
+
+  <!-- ===== 一覧画面 ===== -->
+  <div id="view-list" class="view">
+    <button class="nav-btn" onclick="showView('view-top')">← トップに戻る</button>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="氏名・フリガナで検索…" oninput="renderList()">
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-all" onclick="filterTab('all')">全員</button>
+      <button class="tab inactive" id="tab-active" onclick="filterTab('active')">在籍中</button>
+      <button class="tab inactive" id="tab-other" onclick="filterTab('other')">休止・退所</button>
+    </div>
+
+    <div id="list-count" class="count-label"></div>
+    <div id="member-list"></div>
+  </div>
+
+  <!-- ===== 詳細・編集画面 ===== -->
+  <div id="view-detail" class="view">
+    <button class="nav-btn" onclick="showView('view-list')">← 一覧に戻る</button>
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+        <div class="member-avatar" id="detail-avatar" style="width:54px;height:54px;font-size:22px;"></div>
+        <div>
+          <div id="detail-name" style="font-size:20px; font-weight:bold;"></div>
+          <div id="detail-kana" style="font-size:13px; color:var(--text-sub); margin-top:2px;"></div>
+        </div>
+        <div id="detail-badge" style="margin-left:auto;"></div>
+      </div>
+
+      <div id="detail-body"></div>
+
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button class="btn-edit" style="flex:1;" onclick="startEdit()">✏️ 修正する</button>
+        <button class="btn-danger" onclick="deleteMember()">🗑️ 削除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 編集画面 ===== -->
+  <div id="view-edit" class="view">
+    <button class="nav-btn" onclick="showView('view-detail')">← 詳細に戻る</button>
+    <div class="card">
+      <div class="sec-label">✏️ 情報を修正する</div>
+
+      <label>氏名 <span style="color:var(--red);">*</span></label>
+      <input type="text" id="edit-name">
+      <label>フリガナ</label>
+      <input type="text" id="edit-kana">
+      <label>生年月日</label>
+      <input type="date" id="edit-birth">
+      <label>性別</label>
+      <select id="edit-gender">
+        <option value="">選択してください</option>
+        <option value="男性">男性</option>
+        <option value="女性">女性</option>
+        <option value="その他">その他</option>
+        <option value="回答しない">回答しない</option>
+      </select>
+      <label>郵便番号</label>
+      <input type="text" id="edit-zip">
+      <label>住所</label>
+      <input type="text" id="edit-addr">
+      <label>電話番号 <span style="color:var(--red);">*</span></label>
+      <input type="tel" id="edit-tel">
+      <label>緊急連絡先</label>
+      <input type="tel" id="edit-emergency">
+      <label>緊急連絡先氏名</label>
+      <input type="text" id="edit-emergency-name">
+      <label>障害種別</label>
+      <select id="edit-disability">
+        <option value="">選択してください</option>
+        <option value="身体障害">身体障害</option>
+        <option value="知的障害">知的障害</option>
+        <option value="精神障害">精神障害</option>
+        <option value="発達障害">発達障害</option>
+        <option value="難病">難病</option>
+        <option value="その他">その他</option>
+      </select>
+      <label>備考・特記事項</label>
+      <textarea id="edit-memo" rows="3"></textarea>
+      <label>在籍状況</label>
+      <select id="edit-status">
+        <option value="在籍中">在籍中</option>
+        <option value="休止中">休止中</option>
+        <option value="退所">退所</option>
+      </select>
+
+      <button class="btn-primary" onclick="saveEdit()">💾 修正を保存するにゃ🐾</button>
+      <div id="edit-msg" class="msg-box"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FAB（一覧画面でのみ表示） -->
+<button class="fab" id="fab-add" style="display:none;" onclick="showView('view-new')" title="新規登録">＋</button>
+
+<script>
+// ===== データ管理 =====
+function loadMembers() {
+  return JSON.parse(localStorage.getItem('ww_members') || '[]');
+}
+function saveMembers(list) {
+  localStorage.setItem('ww_members', JSON.stringify(list));
+}
+
+let currentTab = 'all';
+let currentId = null;
+
+// ===== 画面切り替え =====
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('fab-add').style.display = (id === 'view-list') ? 'flex' : 'none';
+  if (id === 'view-top') updateTopCount();
+  if (id === 'view-list') renderList();
+  window.scrollTo(0, 0);
+}
+
+function updateTopCount() {
+  document.getElementById('top-count').textContent = loadMembers().length;
+}
+
+// ===== 新規登録 =====
+function saveNew() {
+  const name = document.getElementById('new-name').value.trim();
+  const tel  = document.getElementById('new-tel').value.trim();
+  if (!name) { showMsg('new-msg', '氏名を入力してにゃ🐾', false); return; }
+  if (!tel)  { showMsg('new-msg', '電話番号を入力してにゃ🐾', false); return; }
+
+  const member = {
+    id: Date.now(),
+    name,
+    kana:          document.getElementById('new-kana').value.trim(),
+    birth:         document.getElementById('new-birth').value,
+    gender:        document.getElementById('new-gender').value,
+    zip:           document.getElementById('new-zip').value.trim(),
+    addr:          document.getElementById('new-addr').value.trim(),
+    tel,
+    emergency:     document.getElementById('new-emergency').value.trim(),
+    emergencyName: document.getElementById('new-emergency-name').value.trim(),
+    disability:    document.getElementById('new-disability').value,
+    memo:          document.getElementById('new-memo').value.trim(),
+    status:        document.getElementById('new-status').value,
+    createdAt:     new Date().toLocaleDateString('ja-JP'),
+  };
+
+  const list = loadMembers();
+  list.push(member);
+  saveMembers(list);
+
+  // フォームリセット
+  ['new-name','new-kana','new-birth','new-gender','new-zip','new-addr','new-tel','new-emergency','new-emergency-name','new-disability','new-memo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.tagName === 'SELECT' ? '' : '';
+  });
+  document.getElementById('new-status').value = '在籍中';
+  showMsg('new-msg', `✅ ${name} さんを登録したにゃ！`, true);
+  setTimeout(() => showView('view-list'), 1500);
+}
+
+// ===== 一覧表示 =====
+function filterTab(tab) {
+  currentTab = tab;
+  ['all','active','other'].forEach(t => {
+    document.getElementById('tab-'+t).className = 'tab ' + (t === tab ? 'active' : 'inactive');
+  });
+  renderList();
+}
+
+function renderList() {
+  const q = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+  let list = loadMembers();
+
+  if (currentTab === 'active') list = list.filter(m => m.status === '在籍中');
+  if (currentTab === 'other')  list = list.filter(m => m.status !== '在籍中');
+  if (q) list = list.filter(m => (m.name+m.kana).toLowerCase().includes(q));
+
+  document.getElementById('list-count').textContent = `${list.length}名`;
+
+  const container = document.getElementById('member-list');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty">利用者が見つからないにゃ🐾</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(m => `
+    <div class="member-item" onclick="showDetail(${m.id})">
+      <div class="member-avatar">${m.name.charAt(0)}</div>
+      <div class="member-info">
+        <div class="member-name">${m.name}
+          <span class="badge ${m.status==='在籍中'?'badge-active':'badge-inactive'}">${m.status}</span>
+        </div>
+        <div class="member-meta">${m.kana || '　'} ／ ${m.tel || '電話番号未登録'}</div>
+      </div>
+      <div class="member-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ===== 詳細表示 =====
+function showDetail(id) {
+  currentId = id;
+  const m = loadMembers().find(x => x.id === id);
+  if (!m) return;
+
+  document.getElementById('detail-avatar').textContent = m.name.charAt(0);
+  document.getElementById('detail-name').textContent = m.name;
+  document.getElementById('detail-kana').textContent = m.kana || '　';
+  document.getElementById('detail-badge').innerHTML = `<span class="badge ${m.status==='在籍中'?'badge-active':'badge-inactive'}">${m.status}</span>`;
+
+  const age = m.birth ? calcAge(m.birth) + '歳' : '未登録';
+  const rows = [
+    ['生年月日', m.birth ? m.birth.replace(/-/g,'/') + `（${age}）` : '未登録'],
+    ['性別',     m.gender || '未登録'],
+    ['郵便番号', m.zip || '未登録'],
+    ['住所',     m.addr || '未登録'],
+    ['電話番号', m.tel || '未登録'],
+    ['緊急連絡先', m.emergency || '未登録'],
+    ['緊急連絡先氏名', m.emergencyName || '未登録'],
+    ['障害種別', m.disability || '未登録'],
+    ['備考',     m.memo || 'なし'],
+    ['登録日',   m.createdAt || '不明'],
+  ];
+
+  document.getElementById('detail-body').innerHTML = rows.map(([k,v]) => `
+    <div class="detail-row">
+      <div class="detail-key">${k}</div>
+      <div class="detail-val">${v}</div>
+    </div>
+  `).join('');
+
+  showView('view-detail');
+}
+
+function calcAge(birth) {
+  const b = new Date(birth), t = new Date();
+  let age = t.getFullYear() - b.getFullYear();
+  if (t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) age--;
+  return age;
+}
+
+// ===== 編集 =====
+function startEdit() {
+  const m = loadMembers().find(x => x.id === currentId);
+  if (!m) return;
+  document.getElementById('edit-name').value          = m.name || '';
+  document.getElementById('edit-kana').value          = m.kana || '';
+  document.getElementById('edit-birth').value         = m.birth || '';
+  document.getElementById('edit-gender').value        = m.gender || '';
+  document.getElementById('edit-zip').value           = m.zip || '';
+  document.getElementById('edit-addr').value          = m.addr || '';
+  document.getElementById('edit-tel').value           = m.tel || '';
+  document.getElementById('edit-emergency').value     = m.emergency || '';
+  document.getElementById('edit-emergency-name').value = m.emergencyName || '';
+  document.getElementById('edit-disability').value    = m.disability || '';
+  document.getElementById('edit-memo').value          = m.memo || '';
+  document.getElementById('edit-status').value        = m.status || '在籍中';
+  showView('view-edit');
+}
+
+function saveEdit() {
+  const name = document.getElementById('edit-name').value.trim();
+  const tel  = document.getElementById('edit-tel').value.trim();
+  if (!name) { showMsg('edit-msg', '氏名を入力してにゃ🐾', false); return; }
+  if (!tel)  { showMsg('edit-msg', '電話番号を入力してにゃ🐾', false); return; }
+
+  let list = loadMembers();
+  const idx = list.findIndex(x => x.id === currentId);
+  if (idx < 0) return;
+
+  list[idx] = { ...list[idx],
+    name, kana: document.getElementById('edit-kana').value.trim(),
+    birth:         document.getElementById('edit-birth').value,
+    gender:        document.getElementById('edit-gender').value,
+    zip:           document.getElementById('edit-zip').value.trim(),
+    addr:          document.getElementById('edit-addr').value.trim(),
+    tel,
+    emergency:     document.getElementById('edit-emergency').value.trim(),
+    emergencyName: document.getElementById('edit-emergency-name').value.trim(),
+    disability:    document.getElementById('edit-disability').value,
+    memo:          document.getElementById('edit-memo').value.trim(),
+    status:        document.getElementById('edit-status').value,
+  };
+  saveMembers(list);
+  showMsg('edit-msg', '✅ 修正を保存したにゃ！', true);
+  setTimeout(() => showDetail(currentId), 1200);
+}
+
+// ===== 削除 =====
+function deleteMember() {
+  const m = loadMembers().find(x => x.id === currentId);
+  if (!m) return;
+  if (!confirm(`「${m.name}」さんのデータを削除しますか？`)) return;
+  saveMembers(loadMembers().filter(x => x.id !== currentId));
+  showView('view-list');
+}
+
+// ===== メッセージ =====
+function showMsg(id, text, ok) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg-box ' + (ok ? 'msg-success' : 'msg-error');
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 2500);
+}
+
+// 初期化
+updateTopCount();
+</script>
+</body>
+</html>
