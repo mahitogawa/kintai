@@ -460,7 +460,22 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     </button>
     <div class="card">
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
-      <p style="font-size:14px; color:#ba9b85; margin:0 0 16px; font-weight:bold;">打刻時刻の修正ができるにゃ🐾</p>
+      <p style="font-size:14px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">打刻時刻の修正ができるにゃ🐾</p>
+
+      <!-- 現在の打刻状況 -->
+      <div id="admin-current" style="background:#2a1f18; border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="text-align:center; flex:1;">
+          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">開始時刻</div>
+          <div id="admin-cur-start" style="font-size:22px; font-weight:bold; color:#ff9f43;">--:--</div>
+        </div>
+        <div style="color:#ba9b85; font-size:20px;">→</div>
+        <div style="text-align:center; flex:1;">
+          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">終業時刻</div>
+          <div id="admin-cur-end" style="font-size:22px; font-weight:bold; color:#e74c3c;">--:--</div>
+        </div>
+        <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
+      </div>
+
       <label>開始時刻を修正（例：09:00）</label>
       <input type="time" id="admin-start" style="margin-bottom:10px;">
       <label>終業時刻を修正（例：17:00）</label>
@@ -549,6 +564,38 @@ function loadAdminTime() {
     document.getElementById('admin-end').value =
       String(e.getHours()).padStart(2,'0')+':'+String(e.getMinutes()).padStart(2,'0');
   }
+}
+
+function adminUpdateCurrentDisplay() {
+  const s = window._startMs ? new Date(window._startMs) : null;
+  const e = window._endMs   ? new Date(window._endMs)   : null;
+  const fmt = d => d ? (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')) : '--:--';
+  const cs = document.getElementById('admin-cur-start');
+  const ce = document.getElementById('admin-cur-end');
+  if (cs) cs.textContent = fmt(s);
+  if (ce) ce.textContent = fmt(e);
+}
+
+function adminClearStamp() {
+  if (!confirm('打刻データをクリアしますか？')) return;
+  window._startMs = null;
+  window._endMs = null;
+  localStorage.removeItem('today_start');
+  localStorage.removeItem('today_end');
+  // 表示リセット
+  const sd = document.getElementById('start-disp');
+  const ed = document.getElementById('end-disp');
+  if (sd) sd.textContent = '--:--';
+  if (ed) ed.textContent = '--:--';
+  const sb = document.getElementById('start-btn');
+  const eb = document.getElementById('end-btn');
+  if (sb) { sb.disabled=false; sb.textContent='開始時刻を打刻'; }
+  if (eb) { eb.disabled=true;  eb.textContent='終業時間を打刻'; }
+  const dur = document.getElementById('duration-disp');
+  if (dur) dur.textContent='-- 時間 -- 分';
+  adminUpdateCurrentDisplay();
+  const msg = document.getElementById('admin-msg');
+  if (msg) { msg.style.display='block'; msg.style.background='#fdecea'; msg.style.color='#7f1d1d'; msg.textContent='✅ 打刻をクリアしたにゃ！'; setTimeout(()=>msg.style.display='none',2000); }
 }
 
 function adminSave() {
@@ -663,6 +710,7 @@ function adminTapEntry() {
 }
 
 function switchView(v) {
+  if (v === 'admin') adminUpdateCurrentDisplay();
   document.getElementById('view-main').style.display  = v==='main' ?'block':'none';
   document.getElementById('view-sub').style.display   = v==='sub'  ?'block':'none';
   document.getElementById('view-admin').style.display = v==='admin'?'block':'none';
