@@ -548,6 +548,28 @@ function submitFromSub() {
     msg.style.background = '#EAF3DE';
     msg.style.color = '#1a4008';
     msg.textContent = '✅ 登録完了にゃ！';
+
+    // Googleスプレッドシートに送信
+    const todayStr2 = new Date().toLocaleDateString('ja-JP');
+    const startT = window._startMs ? new Date(window._startMs) : null;
+    const endT   = window._endMs   ? new Date(window._endMs)   : null;
+    const fmt2 = d => d ? (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')) : '--:--';
+    const diffMin2 = (startT && endT) ? Math.round((endT - startT) / 60000) : 0;
+    const mood2 = localStorage.getItem(todayStr2 + '_choice_mood') || '未選択';
+    const payload = {
+      date: todayStr2,
+      start: fmt2(startT),
+      end: fmt2(endT),
+      duration: Math.floor(diffMin2/60) + '時間' + (diffMin2%60) + '分',
+      mood: mood2,
+      wage: Math.round((diffMin2/60) * 1140)
+    };
+    fetch('https://script.google.com/macros/s/AKfycbzUBqh4AwyUluE25taJbhmLPVjiiAdP60c0ju8iwSGw8KNR2zXTa4XaFr85QHaKB2ad/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    }).catch(function(e){ console.log('シート送信エラー:', e); });
   }
 }
 
