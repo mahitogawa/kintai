@@ -878,9 +878,14 @@ function calcWage() {
   document.getElementById('w-total').textContent = h>0?fmt(Math.max(0,base+bonus-food)):'-- 円';
 }
 function autoCalcHours() {
-  const sum = getHistory().reduce((a,r) => a + r.hours, 0);
+  const hist = getHistory();
+  const sum = hist.reduce((a,r) => a + r.hours, 0);
   document.getElementById('total-hours').value = sum.toFixed(1);
   localStorage.setItem(window._prefix+'total_hours', sum.toFixed(1));
+  window._days = hist.length;
+  localStorage.setItem(window._KEY_DAYS, window._days);
+  document.getElementById('days-count').textContent = window._days;
+  updateSeikinn();
   calcWage();
 }
 function saveMeals() {
