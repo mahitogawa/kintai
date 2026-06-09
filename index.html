@@ -504,6 +504,19 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <span style="color:#e74c3c;">日</span><span style="color:#ba9b85;">月</span><span style="color:#ba9b85;">火</span><span style="color:#ba9b85;">水</span><span style="color:#ba9b85;">木</span><span style="color:#ba9b85;">金</span><span style="color:#3498db;">土</span>
       </div>
       <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;"></div>
+      <!-- 手動追加 -->
+      <div style="border-top:1px solid #3d2e1a;padding-top:14px;margin-bottom:14px;">
+        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 過去のデータを手動追加</p>
+        <label>日付（例：6/8）</label>
+        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
+        <label>開始時刻</label>
+        <input type="time" id="manual-start" style="margin-bottom:8px;">
+        <label>終業時刻</label>
+        <input type="time" id="manual-end" style="margin-bottom:12px;">
+        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
+        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
+      </div>
+
       <div id="hist-edit-area" style="display:none;border-top:1px solid #3d2e1a;padding-top:14px;">
         <div style="background:#2a1f18;border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;">
           <div id="hist-sel-date" style="font-size:13px;color:#ba9b85;margin-bottom:4px;"></div>
@@ -1052,6 +1065,36 @@ setChoiceVisual('req', localStorage.getItem(todayStr+'_choice_req'));
 document.getElementById('yasumi-memo').value = localStorage.getItem(window._prefix+'yasumi_memo')||'';
 setChoiceVisual('way', localStorage.getItem(todayStr+'_choice_way'));
 updateSeikinn(); calcWage(); renderHistory(); initAccordion();
+
+function addManualHistory() {
+  var dateVal  = document.getElementById('manual-date').value.trim();
+  var startVal = document.getElementById('manual-start').value;
+  var endVal   = document.getElementById('manual-end').value;
+  var msg = document.getElementById('manual-msg');
+  if (!dateVal || !startVal || !endVal) {
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent='日付・開始・終業すべて入力してにゃ'; return;
+  }
+  var hist = getHistory();
+  if (hist.some(function(r){ return r.date === dateVal; })) {
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent=dateVal+' はすでに記録があるにゃ'; return;
+  }
+  var sh = parseInt(startVal.split(':')[0]), sm = parseInt(startVal.split(':')[1]);
+  var eh = parseInt(endVal.split(':')[0]),   em = parseInt(endVal.split(':')[1]);
+  var diff = (eh*60+em)-(sh*60+sm);
+  var h = Math.floor(diff/60), m = diff%60;
+  hist.push({ date:dateVal, start:startVal, end:endVal, hours:h+(m/60), text:h+'h'+m+'m' });
+  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
+  renderHistory();
+  renderCal();
+  document.getElementById('manual-date').value  = '';
+  document.getElementById('manual-start').value = '';
+  document.getElementById('manual-end').value   = '';
+  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
+  msg.textContent='✅ '+dateVal+' のデータを追加したにゃ！';
+  setTimeout(function(){ msg.style.display='none'; }, 2500);
+}
 
 // ===== 過去打刻修正カレンダー =====
 var calYear, calMonth;
