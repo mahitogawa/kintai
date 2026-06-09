@@ -852,15 +852,6 @@ function checkPw() {
 
 if (sessionStorage.getItem('logged_in') === 'yes') unlock();
 
-function checkPw() {
-  const v = document.getElementById('pw-input').value;
-  const err = document.getElementById('pw-error');
-  err.textContent = '';
-  if (v.length === 4) {
-    if (v === PW) { sessionStorage.setItem('logged_in','yes'); unlock(); }
-    else { err.textContent = 'パスワードが違うにゃ ✖'; document.getElementById('pw-input').value = ''; }
-  }
-}
 function unlock() {
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
