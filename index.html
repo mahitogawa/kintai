@@ -504,20 +504,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <span style="color:#e74c3c;">日</span><span style="color:#ba9b85;">月</span><span style="color:#ba9b85;">火</span><span style="color:#ba9b85;">水</span><span style="color:#ba9b85;">木</span><span style="color:#ba9b85;">金</span><span style="color:#3498db;">土</span>
       </div>
       <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;"></div>
-      <!-- 手動追加 -->
-      <div style="border-top:1px solid #3d2e1a;padding-top:14px;margin-bottom:14px;">
-        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 過去のデータを手動追加</p>
-        <label>日付（例：6/8）</label>
-        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
-        <label>開始時刻</label>
-        <input type="time" id="manual-start" style="margin-bottom:8px;">
-        <label>終業時刻</label>
-        <input type="time" id="manual-end" style="margin-bottom:12px;">
-        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
-        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
-      </div>
-
-      <div id="hist-edit-area" style="display:none;border-top:1px solid #3d2e1a;padding-top:14px;">
+      <div id="hist-edit-area" style="display:none;border-top:1px solid #3d2e1a;padding-top:14px;margin-bottom:14px;">
         <div style="background:#2a1f18;border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;">
           <div id="hist-sel-date" style="font-size:13px;color:#ba9b85;margin-bottom:4px;"></div>
           <span id="hist-cur-disp" style="font-size:20px;font-weight:bold;color:#ff9f43;"></span>
@@ -528,6 +515,19 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <input type="time" id="hist-end" style="margin-bottom:16px;">
         <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">✓ 過去の記録を修正するにゃ</button>
         <div id="hist-edit-msg" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;text-align:center;"></div>
+      </div>
+
+      <!-- 手動追加 -->
+      <div style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
+        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 記録がない日を手動追加</p>
+        <label>日付（例：6/8）</label>
+        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
+        <label>開始時刻</label>
+        <input type="time" id="manual-start" style="margin-bottom:8px;">
+        <label>終業時刻</label>
+        <input type="time" id="manual-end" style="margin-bottom:12px;">
+        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
+        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
       </div>
     </div>
 
@@ -627,6 +627,8 @@ function adminClearStamp() {
   window._endMs = null;
   localStorage.removeItem('today_start');
   localStorage.removeItem('today_end');
+  localStorage.removeItem(window._KEY_STAMP);
+  localStorage.removeItem(window._KEY_SUBMIT);
   // 表示リセット
   const sd = document.getElementById('start-disp');
   const ed = document.getElementById('end-disp');
@@ -1142,54 +1144,75 @@ function renderCal() {
     var bg  = isToday ? '#ff9f43' : hasRec ? '#2e7d0e' : '#2a1f18';
     var col = (isToday || hasRec) ? '#fff' : dow === 0 ? '#e74c3c' : dow === 6 ? '#3498db' : '#ba9b85';
     var bdr = isToday ? '2px solid #ff9f43' : hasRec ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
-    var tap = hasRec ? 'calSelect(' + histMap[dateKey] + ')' : '';
+    var tap = hasRec ? 'calSelect(' + histMap[dateKey] + ',\'' + dateKey + '\')' : 'calNewEntry(\'' + dateKey + '\')';
     cells += '<div onclick="' + tap + '" style="text-align:center;padding:7px 2px;border-radius:8px;' +
       'background:' + bg + ';color:' + col + ';font-size:14px;font-weight:bold;' +
-      'cursor:' + (hasRec ? 'pointer' : 'default') + ';border:' + bdr + ';">' +
+      'cursor:pointer;border:' + bdr + ';">' +
       day + (hasRec ? '<div style="font-size:8px;margin-top:1px;">●</div>' : '') + '</div>';
   }
   grid.innerHTML = cells;
 }
 
-function calSelect(idx) {
+function calSelect(idx, dateKey) {
   var hist = getHistory();
   var r = hist[idx];
   if (!r) return;
   var area = document.getElementById('hist-edit-area');
   area.style.display = 'block';
   area.dataset.idx = idx;
-  document.getElementById('hist-sel-date').textContent = r.date + ' の打刻記録';
+  area.dataset.mode = 'edit';
+  document.getElementById('hist-sel-date').textContent = r.date + ' の打刻記録（修正）';
   document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
   document.getElementById('hist-start').value = r.start;
   document.getElementById('hist-end').value   = r.end;
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+function calNewEntry(dateKey) {
+  var area = document.getElementById('hist-edit-area');
+  area.style.display = 'block';
+  area.dataset.idx = '-1';
+  area.dataset.mode = 'new';
+  area.dataset.dateKey = dateKey;
+  document.getElementById('hist-sel-date').textContent = dateKey + ' の打刻を追加';
+  document.getElementById('hist-cur-disp').textContent = '未登録';
+  document.getElementById('hist-start').value = '';
+  document.getElementById('hist-end').value   = '';
+  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 function saveHistEdit() {
   var area = document.getElementById('hist-edit-area');
   var idx  = parseInt(area.dataset.idx);
+  var mode = area.dataset.mode;
   var startVal = document.getElementById('hist-start').value;
   var endVal   = document.getElementById('hist-end').value;
   var msg = document.getElementById('hist-edit-msg');
   if (!startVal || !endVal) {
-    msg.style.display = 'block'; msg.style.background = '#FAEEDA'; msg.style.color = '#633806';
-    msg.textContent = '開始・終業時刻を両方入力してにゃ'; return;
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent='開始・終業時刻を両方入力してにゃ'; return;
   }
+  var sh=parseInt(startVal.split(':')[0]), sm=parseInt(startVal.split(':')[1]);
+  var eh=parseInt(endVal.split(':')[0]),   em=parseInt(endVal.split(':')[1]);
+  var diff=(eh*60+em)-(sh*60+sm);
+  var h=Math.floor(diff/60), m=diff%60;
   var hist = getHistory();
-  var r = hist[idx];
-  if (!r) return;
-  var sh = parseInt(startVal.split(':')[0]), sm = parseInt(startVal.split(':')[1]);
-  var eh = parseInt(endVal.split(':')[0]),   em = parseInt(endVal.split(':')[1]);
-  var diff = (eh * 60 + em) - (sh * 60 + sm);
-  var h = Math.floor(diff / 60), m = diff % 60;
-  hist[idx] = { date: r.date, start: startVal, end: endVal, hours: h + (m / 60), text: h + 'h' + m + 'm' };
+  var dateLabel;
+  if (mode === 'new') {
+    dateLabel = area.dataset.dateKey;
+    hist.push({ date:dateLabel, start:startVal, end:endVal, hours:h+(m/60), text:h+'h'+m+'m' });
+  } else {
+    var r = hist[idx];
+    if (!r) return;
+    dateLabel = r.date;
+    hist[idx] = { date:r.date, start:startVal, end:endVal, hours:h+(m/60), text:h+'h'+m+'m' };
+  }
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
-  renderHistory();
-  renderCal();
+  renderHistory(); renderCal();
   document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
-  msg.style.display = 'block'; msg.style.background = '#EAF3DE'; msg.style.color = '#1a4008';
-  msg.textContent = '✅ ' + r.date + ' の記録を修正したにゃ！';
-  setTimeout(function() { msg.style.display = 'none'; }, 2500);
+  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
+  msg.textContent='✅ '+dateLabel+' の記録を保存したにゃ！';
+  setTimeout(function(){ msg.style.display='none'; area.style.display='none'; }, 2000);
 }
 </script>
 </body>
