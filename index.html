@@ -506,7 +506,8 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <input type="time" id="hist-start" style="margin-bottom:10px;">
         <label>終業時刻を修正（例：17:00）</label>
         <input type="time" id="hist-end" style="margin-bottom:16px;">
-        <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">✓ 過去の記録を修正するにゃ</button>
+        <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✓ 過去の記録を修正するにゃ</button>
+        <button onclick="deleteHistEntry()" id="btn-delete-hist" style="width:100%;padding:16px;border-radius:12px;border:none;background:#c0392b;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">🗑 この日の記録を削除するにゃ</button>
         <div id="hist-edit-msg" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;text-align:center;"></div>
       </div>
 
@@ -1136,6 +1137,8 @@ function addManualHistory() {
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
   renderHistory();
   renderCal();
+  autoCalcHours();
+  syncToCloud({ history: hist });
   document.getElementById('manual-date').value  = '';
   document.getElementById('manual-start').value = '';
   document.getElementById('manual-end').value   = '';
@@ -1215,6 +1218,7 @@ function calSelect(idx, dateKey) {
   document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
   document.getElementById('hist-start').value = r.start;
   document.getElementById('hist-end').value   = r.end;
+  document.getElementById('btn-delete-hist').style.display = 'block';
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
@@ -1230,7 +1234,21 @@ function calNewEntry(dateKey) {
   document.getElementById('hist-cur-disp').textContent = '未登録';
   document.getElementById('hist-start').value = '';
   document.getElementById('hist-end').value   = '';
+  document.getElementById('btn-delete-hist').style.display = 'none';
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function deleteHistEntry() {
+  var area = document.getElementById('hist-edit-area');
+  var idx  = parseInt(area.dataset.idx);
+  if (idx < 0) return;
+  if (!confirm('この日の記録を削除するにゃ？')) return;
+  var hist = getHistory();
+  hist.splice(idx, 1);
+  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
+  area.style.display = 'none';
+  renderHistory(); renderCal(); autoCalcHours();
+  syncToCloud({ history: hist });
 }
 
 function saveHistEdit() {
@@ -1260,7 +1278,8 @@ function saveHistEdit() {
     hist[idx] = { date:r.date, start:startVal, end:endVal, hours:h+(m/60), text:h+'h'+m+'m' };
   }
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
-  renderHistory(); renderCal();
+  renderHistory(); renderCal(); autoCalcHours();
+  syncToCloud({ history: hist });
   document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
   msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
   msg.textContent='✅ '+dateLabel+' の記録を保存したにゃ！';
