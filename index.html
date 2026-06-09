@@ -518,7 +518,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       </div>
 
       <!-- 手動追加 -->
-      <div style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
+      <div id="manual-add-form" style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
         <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 記録がない日を手動追加</p>
         <label>日付（例：6/8）</label>
         <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
@@ -1068,6 +1068,18 @@ document.getElementById('yasumi-memo').value = localStorage.getItem(window._pref
 setChoiceVisual('way', localStorage.getItem(todayStr+'_choice_way'));
 updateSeikinn(); calcWage(); renderHistory(); initAccordion();
 
+function calTapEmpty(month, day) {
+  var dateKey = month + '/' + day;
+  // 手動追加フォームに日付をセット
+  var inp = document.getElementById('manual-date');
+  if (inp) { inp.value = dateKey; }
+  // フォームまでスクロール
+  var form = document.getElementById('manual-add-form');
+  if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // hist-edit-areaを閉じる
+  document.getElementById('hist-edit-area').style.display = 'none';
+}
+
 function addManualHistory() {
   var dateVal  = document.getElementById('manual-date').value.trim();
   var startVal = document.getElementById('manual-start').value;
@@ -1100,6 +1112,7 @@ function addManualHistory() {
 
 // ===== 過去打刻修正カレンダー =====
 var calYear, calMonth;
+var selectedCalDay = null;
 
 function initCal() {
   var now = new Date();
@@ -1141,9 +1154,10 @@ function renderCal() {
     var hasRec  = histMap[dateKey] !== undefined;
     var isToday = (calYear === today.getFullYear() && calMonth === today.getMonth() && day === today.getDate());
     var dow = new Date(calYear, calMonth, day).getDay();
-    var bg  = isToday ? '#ff9f43' : hasRec ? '#2e7d0e' : '#2a1f18';
-    var col = (isToday || hasRec) ? '#fff' : dow === 0 ? '#e74c3c' : dow === 6 ? '#3498db' : '#ba9b85';
-    var bdr = isToday ? '2px solid #ff9f43' : hasRec ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
+    var isSel = (dateKey === selectedCalDay);
+    var bg  = isSel ? '#b8860b' : isToday ? '#ff9f43' : hasRec ? '#2e7d0e' : '#2a1f18';
+    var col = (isSel || isToday || hasRec) ? '#fff' : dow === 0 ? '#e74c3c' : dow === 6 ? '#3498db' : '#ba9b85';
+    var bdr = isSel ? '3px solid #fff200' : isToday ? '2px solid #ff9f43' : hasRec ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
     var tap = hasRec ? 'calSelect(' + histMap[dateKey] + ',\'' + dateKey + '\')' : 'calNewEntry(\'' + dateKey + '\')';
     cells += '<div onclick="' + tap + '" style="text-align:center;padding:7px 2px;border-radius:8px;' +
       'background:' + bg + ';color:' + col + ';font-size:14px;font-weight:bold;' +
@@ -1154,6 +1168,8 @@ function renderCal() {
 }
 
 function calSelect(idx, dateKey) {
+  selectedCalDay = dateKey;
+  renderCal();
   var hist = getHistory();
   var r = hist[idx];
   if (!r) return;
@@ -1169,6 +1185,8 @@ function calSelect(idx, dateKey) {
 }
 
 function calNewEntry(dateKey) {
+  selectedCalDay = dateKey;
+  renderCal();
   var area = document.getElementById('hist-edit-area');
   area.style.display = 'block';
   area.dataset.idx = '-1';
