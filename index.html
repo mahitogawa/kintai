@@ -734,7 +734,10 @@ function unlock() {
 document.getElementById('today-label').textContent =
   (d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
 const nm = new Date(d.getFullYear(), d.getMonth()+1, 20);
-document.getElementById('w-paydate').textContent = (nm.getMonth()+1)+'月20日';
+const paydateText = nm.getFullYear() !== d.getFullYear()
+  ? nm.getFullYear()+'年'+(nm.getMonth()+1)+'月20日'
+  : (nm.getMonth()+1)+'月20日';
+document.getElementById('w-paydate').textContent = paydateText;
 
 let _adminTapCount = 0;
 let _adminTapTimer = null;
