@@ -495,27 +495,44 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div id="admin-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center;"></div>
     </div>
 
-    <!-- 過去の打刻修正 -->
+    <!-- 過去の打刻修正 カレンダー -->
     <div class="card">
       <p class="sec-label">📅 過去の打刻を修正する</p>
-      <p style="font-size:13px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">履歴から日付を選んで修正できるにゃ</p>
+      <p style="font-size:13px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">日付をタップして修正できるにゃ</p>
 
-      <label>日付を選ぶ</label>
-      <select id="hist-date-sel" style="margin-bottom:12px;" onchange="loadHistDate()">
-        <option value="">--- 選択してにゃ ---</option>
-      </select>
+      <!-- カレンダーヘッダー -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <button onclick="calPrev()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:20px; padding:6px 12px; border-radius:8px; cursor:pointer;">‹</button>
+        <div id="cal-month-label" style="font-size:16px; font-weight:bold; color:#f5ebe6;"></div>
+        <button onclick="calNext()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:20px; padding:6px 12px; border-radius:8px; cursor:pointer;">›</button>
+      </div>
 
+      <!-- 曜日ヘッダー -->
+      <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:4px;">
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#e74c3c;">日</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">月</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">火</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">水</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">木</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">金</div>
+        <div style="text-align:center; font-size:11px; font-weight:bold; color:#3498db;">土</div>
+      </div>
+
+      <!-- カレンダーグリッド -->
+      <div id="cal-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:14px;"></div>
+
+      <!-- 選択した日の修正エリア -->
       <div id="hist-edit-area" style="display:none;">
         <div style="background:#2a1f18; border-radius:10px; padding:12px; margin-bottom:12px; text-align:center;">
-          <span style="font-size:13px; color:#ba9b85;">記録中の打刻：</span>
-          <span id="hist-cur-disp" style="font-size:18px; font-weight:bold; color:#ff9f43; margin-left:8px;"></span>
+          <div id="hist-sel-date" style="font-size:13px; color:#ba9b85; margin-bottom:4px;"></div>
+          <span id="hist-cur-disp" style="font-size:20px; font-weight:bold; color:#ff9f43;"></span>
         </div>
         <label>開始時刻を修正（例：09:00）</label>
         <input type="time" id="hist-start" style="margin-bottom:10px;">
         <label>終業時刻を修正（例：17:00）</label>
         <input type="time" id="hist-end" style="margin-bottom:16px;">
         <button onclick="saveHistEdit()" style="width:100%; padding:16px; border-radius:12px; border:none; background:#2e7d0e; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">
-          <i class="ti ti-check" style="margin-right:6px;"></i>過去の記録を修正するにゃ
+          ✓ 過去の記録を修正するにゃ
         </button>
         <div id="hist-edit-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:15px; font-weight:bold; text-align:center;"></div>
       </div>
@@ -655,36 +672,84 @@ function adminClearStamp() {
   if (msg) { msg.style.display='block'; msg.style.background='#fdecea'; msg.style.color='#7f1d1d'; msg.textContent='✅ 打刻をクリアしたにゃ！'; setTimeout(()=>msg.style.display='none',2000); }
 }
 
-function loadHistoryToSelect() {
-  const sel = document.getElementById('hist-date-sel');
-  if (!sel) return;
-  const hist = getHistory();
-  sel.innerHTML = '<option value="">--- 選択してにゃ ---</option>';
-  hist.forEach((r, i) => {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = r.date + '（' + r.start + ' 〜 ' + r.end + '）';
-    sel.appendChild(opt);
-  });
+// ===== カレンダー =====
+let calYear, calMonth;
+
+function initCal() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCal();
 }
 
-function loadHistDate() {
-  const sel = document.getElementById('hist-date-sel');
-  const idx = sel.value;
-  const area = document.getElementById('hist-edit-area');
-  if (idx === '') { area.style.display = 'none'; return; }
+function calPrev() { calMonth--; if (calMonth < 0) { calMonth=11; calYear--; } renderCal(); }
+function calNext() { calMonth++; if (calMonth > 11) { calMonth=0; calYear++; } renderCal(); }
+
+function renderCal() {
+  const label = document.getElementById('cal-month-label');
+  const grid  = document.getElementById('cal-grid');
+  if (!label || !grid) return;
+
+  label.textContent = calYear + '年' + (calMonth+1) + '月';
   const hist = getHistory();
-  const r = hist[parseInt(idx)];
+
+  // 履歴の日付マップ（"6/7" → index）
+  const histMap = {};
+  hist.forEach((r, i) => { histMap[r.date] = i; });
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+
+  let cells = '';
+  // 空白
+  for (let i = 0; i < firstDay; i++) {
+    cells += '<div></div>';
+  }
+  for (let d = 1; d <= lastDate; d++) {
+    const dateKey = (calMonth+1) + '/' + d;
+    const hasRecord = histMap[dateKey] !== undefined;
+    const isToday = (calYear === today.getFullYear() && calMonth === today.getMonth() && d === today.getDate());
+    const isSun = new Date(calYear, calMonth, d).getDay() === 0;
+    const isSat = new Date(calYear, calMonth, d).getDay() === 6;
+
+    const bgColor = isToday ? '#ff9f43' : hasRecord ? '#2e7d0e' : '#2a1f18';
+    const textColor = (isToday || hasRecord) ? '#fff' : isSun ? '#e74c3c' : isSat ? '#3498db' : '#ba9b85';
+    const cursor = hasRecord ? 'pointer' : 'default';
+    const onclick = hasRecord ? 'calSelectDate('' + dateKey + '',' + histMap[dateKey] + ')' : '';
+    const border = isToday ? '2px solid #ff9f43' : hasRecord ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
+
+    cells += '<div onclick="' + onclick + '" style="' +
+      'text-align:center; padding:8px 2px; border-radius:8px;' +
+      'background:' + bgColor + '; color:' + textColor + ';' +
+      'font-size:14px; font-weight:bold; cursor:' + cursor + ';' +
+      'border:' + border + ';' +
+      (hasRecord ? 'box-shadow:0 2px 6px rgba(46,125,14,0.3);' : '') +
+      '">' + d + (hasRecord ? '<div style="font-size:8px;margin-top:1px;">●</div>' : '') + '</div>';
+  }
+  grid.innerHTML = cells;
+}
+
+function calSelectDate(dateKey, idx) {
+  const hist = getHistory();
+  const r = hist[idx];
   if (!r) return;
+  const area = document.getElementById('hist-edit-area');
   area.style.display = 'block';
+  document.getElementById('hist-sel-date').textContent = dateKey + ' の打刻記録';
   document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
   document.getElementById('hist-start').value = r.start;
   document.getElementById('hist-end').value = r.end;
+  area.dataset.idx = idx;
+  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+function loadHistoryToSelect() { renderCal(); }
+function loadHistDate() {}
+
 function saveHistEdit() {
-  const sel = document.getElementById('hist-date-sel');
-  const idx = parseInt(sel.value);
+  const area = document.getElementById('hist-edit-area');
+  const idx = parseInt(area.dataset.idx);
   const startVal = document.getElementById('hist-start').value;
   const endVal   = document.getElementById('hist-end').value;
   const msg = document.getElementById('hist-edit-msg');
@@ -706,6 +771,7 @@ function saveHistEdit() {
   msg.textContent='✅ ' + r.date + ' の記録を修正したにゃ！';
   document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
   setTimeout(() => { msg.style.display='none'; }, 2500);
+  renderCal();
 }
 
 function adminSave() {
@@ -820,7 +886,7 @@ function adminTapEntry() {
 }
 
 function switchView(v) {
-  if (v === 'admin') { adminUpdateCurrentDisplay(); loadHistoryToSelect(); }
+  if (v === 'admin') { adminUpdateCurrentDisplay(); initCal(); }
   document.getElementById('view-main').style.display  = v==='main' ?'block':'none';
   document.getElementById('view-sub').style.display   = v==='sub'  ?'block':'none';
   document.getElementById('view-admin').style.display = v==='admin'?'block':'none';
