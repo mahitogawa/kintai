@@ -586,7 +586,6 @@ function submitFromSub() {
     const btn = document.getElementById('reg-btn');
     if (btn) { btn.disabled = true; btn.textContent = '登録完了にゃ！'; }
     showPaws(document.querySelector('[onclick="submitFromSub()"]'));
-    syncToGAS();
     document.getElementById('paw-area').innerHTML = '';
     const msg = document.getElementById('sub-reg-msg');
     msg.style.display = 'block';
@@ -833,7 +832,6 @@ function submitToday() {
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
     showPaws(btn);
-    syncToGAS();
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
 }
@@ -912,7 +910,7 @@ function showPaws(el) {
   const rect = el ? el.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 2; i++) {
     const paw = document.createElement('span');
     paw.className = 'paw-particle';
     paw.textContent = '🐾';
@@ -1053,33 +1051,6 @@ function copyAll() {
 
 // ===== 履歴 =====
 // ===== Cloudflare Workers KV 連携 =====
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6WIqrDl9UR1rSay22msXGJv1rRQu3VdcEsAD7lh-t8-VtilV2TalRZC166amNrWuA/exec';
-
-async function syncToGAS() {
-  try {
-    const hist = getHistory();
-    const today = hist[hist.length - 1] || {};
-    const data = {
-      date:        today.date || '',
-      start:       today.start || '',
-      end:         today.end || '',
-      hours:       today.text || '',
-      mood:        window._selectedMood || '',
-      memo:        localStorage.getItem(todayStr+'_memo') || '',
-      staffMemo:   localStorage.getItem(window._prefix+'staff_memo') || '',
-      saturdayRec: localStorage.getItem(window._prefix+'saturday_rec') || '',
-    };
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  } catch(err) {
-    console.log('GAS送信エラー:', err);
-  }
-}
-
 const KINTAI_WORKER = 'https://kintai.mahito-ai.workers.dev';
 
 async function syncToCloud(data) {
