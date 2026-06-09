@@ -184,10 +184,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 /* ===== ヘッダーバー ===== */
 .app-header {
   background: #fff; border-bottom: 1px solid #e8ddd0;
-  padding-top: calc(14px + env(safe-area-inset-top));
-  padding-bottom: 12px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 14px 16px 12px;
   position: sticky; top: 0; z-index: 100;
   display: flex; justify-content: space-between; align-items: center;
   box-shadow: 0 1px 4px rgba(139,94,60,0.08);
@@ -484,7 +481,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
       </div>
 
-      <!-- 今日の修正 -->
       <label>開始時刻を修正（例：09:00）</label>
       <input type="time" id="admin-start" style="margin-bottom:10px;">
       <label>終業時刻を修正（例：17:00）</label>
@@ -498,16 +494,12 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     <!-- 過去の打刻修正 カレンダー -->
     <div class="card">
       <p class="sec-label">📅 過去の打刻を修正する</p>
-      <p style="font-size:13px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">日付をタップして修正できるにゃ</p>
-
-      <!-- カレンダーヘッダー -->
+      <p style="font-size:13px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">緑の日付をタップして修正できるにゃ</p>
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-        <button onclick="calPrev()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:20px; padding:6px 12px; border-radius:8px; cursor:pointer;">‹</button>
+        <button onclick="calPrev()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:22px; padding:6px 14px; border-radius:8px; cursor:pointer;">‹</button>
         <div id="cal-month-label" style="font-size:16px; font-weight:bold; color:#f5ebe6;"></div>
-        <button onclick="calNext()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:20px; padding:6px 12px; border-radius:8px; cursor:pointer;">›</button>
+        <button onclick="calNext()" style="background:#3d2e1a; border:none; color:#ff9f43; font-size:22px; padding:6px 14px; border-radius:8px; cursor:pointer;">›</button>
       </div>
-
-      <!-- 曜日ヘッダー -->
       <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:4px;">
         <div style="text-align:center; font-size:11px; font-weight:bold; color:#e74c3c;">日</div>
         <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">月</div>
@@ -517,11 +509,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div style="text-align:center; font-size:11px; font-weight:bold; color:#ba9b85;">金</div>
         <div style="text-align:center; font-size:11px; font-weight:bold; color:#3498db;">土</div>
       </div>
-
-      <!-- カレンダーグリッド -->
       <div id="cal-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:14px;"></div>
-
-      <!-- 選択した日の修正エリア -->
       <div id="hist-edit-area" style="display:none;">
         <div style="background:#2a1f18; border-radius:10px; padding:12px; margin-bottom:12px; text-align:center;">
           <div id="hist-sel-date" style="font-size:13px; color:#ba9b85; margin-bottom:4px;"></div>
@@ -531,9 +519,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <input type="time" id="hist-start" style="margin-bottom:10px;">
         <label>終業時刻を修正（例：17:00）</label>
         <input type="time" id="hist-end" style="margin-bottom:16px;">
-        <button onclick="saveHistEdit()" style="width:100%; padding:16px; border-radius:12px; border:none; background:#2e7d0e; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">
-          ✓ 過去の記録を修正するにゃ
-        </button>
+        <button onclick="saveHistEdit()" style="width:100%; padding:16px; border-radius:12px; border:none; background:#2e7d0e; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">✓ 過去の記録を修正するにゃ</button>
         <div id="hist-edit-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:15px; font-weight:bold; text-align:center;"></div>
       </div>
     </div>
@@ -592,28 +578,6 @@ function submitFromSub() {
     msg.style.background = '#EAF3DE';
     msg.style.color = '#1a4008';
     msg.textContent = '✅ 登録完了にゃ！';
-
-    // Googleスプレッドシートに送信
-    const todayStr2 = new Date().toLocaleDateString('ja-JP');
-    const startT = window._startMs ? new Date(window._startMs) : null;
-    const endT   = window._endMs   ? new Date(window._endMs)   : null;
-    const fmt2 = d => d ? (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')) : '--:--';
-    const diffMin2 = (startT && endT) ? Math.round((endT - startT) / 60000) : 0;
-    const mood2 = localStorage.getItem(todayStr2 + '_choice_mood') || '未選択';
-    const payload = {
-      date: todayStr2,
-      start: fmt2(startT),
-      end: fmt2(endT),
-      duration: Math.floor(diffMin2/60) + '時間' + (diffMin2%60) + '分',
-      mood: mood2,
-      wage: Math.round((diffMin2/60) * 1140)
-    };
-    fetch('https://script.google.com/macros/s/AKfycbzUBqh4AwyUluE25taJbhmLPVjiiAdP60c0ju8iwSGw8KNR2zXTa4XaFr85QHaKB2ad/exec', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    }).catch(function(e){ console.log('シート送信エラー:', e); });
   }
 }
 
@@ -670,108 +634,6 @@ function adminClearStamp() {
   adminUpdateCurrentDisplay();
   const msg = document.getElementById('admin-msg');
   if (msg) { msg.style.display='block'; msg.style.background='#fdecea'; msg.style.color='#7f1d1d'; msg.textContent='✅ 打刻をクリアしたにゃ！'; setTimeout(()=>msg.style.display='none',2000); }
-}
-
-// ===== カレンダー =====
-let calYear, calMonth;
-
-function initCal() {
-  const now = new Date();
-  calYear = now.getFullYear();
-  calMonth = now.getMonth();
-  renderCal();
-}
-
-function calPrev() { calMonth--; if (calMonth < 0) { calMonth=11; calYear--; } renderCal(); }
-function calNext() { calMonth++; if (calMonth > 11) { calMonth=0; calYear++; } renderCal(); }
-
-function renderCal() {
-  const label = document.getElementById('cal-month-label');
-  const grid  = document.getElementById('cal-grid');
-  if (!label || !grid) return;
-
-  label.textContent = calYear + '年' + (calMonth+1) + '月';
-  const hist = getHistory();
-
-  // 履歴の日付マップ（"6/7" → index）
-  const histMap = {};
-  hist.forEach((r, i) => { histMap[r.date] = i; });
-
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
-  const today = new Date();
-
-  let cells = '';
-  // 空白
-  for (let i = 0; i < firstDay; i++) {
-    cells += '<div></div>';
-  }
-  for (let d = 1; d <= lastDate; d++) {
-    const dateKey = (calMonth+1) + '/' + d;
-    const hasRecord = histMap[dateKey] !== undefined;
-    const isToday = (calYear === today.getFullYear() && calMonth === today.getMonth() && d === today.getDate());
-    const isSun = new Date(calYear, calMonth, d).getDay() === 0;
-    const isSat = new Date(calYear, calMonth, d).getDay() === 6;
-
-    const bgColor = isToday ? '#ff9f43' : hasRecord ? '#2e7d0e' : '#2a1f18';
-    const textColor = (isToday || hasRecord) ? '#fff' : isSun ? '#e74c3c' : isSat ? '#3498db' : '#ba9b85';
-    const cursor = hasRecord ? 'pointer' : 'default';
-    const onclick = hasRecord ? 'calSelectDate('' + dateKey + '',' + histMap[dateKey] + ')' : '';
-    const border = isToday ? '2px solid #ff9f43' : hasRecord ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
-
-    cells += '<div onclick="' + onclick + '" style="' +
-      'text-align:center; padding:8px 2px; border-radius:8px;' +
-      'background:' + bgColor + '; color:' + textColor + ';' +
-      'font-size:14px; font-weight:bold; cursor:' + cursor + ';' +
-      'border:' + border + ';' +
-      (hasRecord ? 'box-shadow:0 2px 6px rgba(46,125,14,0.3);' : '') +
-      '">' + d + (hasRecord ? '<div style="font-size:8px;margin-top:1px;">●</div>' : '') + '</div>';
-  }
-  grid.innerHTML = cells;
-}
-
-function calSelectDate(dateKey, idx) {
-  const hist = getHistory();
-  const r = hist[idx];
-  if (!r) return;
-  const area = document.getElementById('hist-edit-area');
-  area.style.display = 'block';
-  document.getElementById('hist-sel-date').textContent = dateKey + ' の打刻記録';
-  document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
-  document.getElementById('hist-start').value = r.start;
-  document.getElementById('hist-end').value = r.end;
-  area.dataset.idx = idx;
-  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function loadHistoryToSelect() { renderCal(); }
-function loadHistDate() {}
-
-function saveHistEdit() {
-  const area = document.getElementById('hist-edit-area');
-  const idx = parseInt(area.dataset.idx);
-  const startVal = document.getElementById('hist-start').value;
-  const endVal   = document.getElementById('hist-end').value;
-  const msg = document.getElementById('hist-edit-msg');
-  if (!startVal || !endVal) {
-    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
-    msg.textContent='開始・終業時刻を両方入力してにゃ'; return;
-  }
-  let hist = getHistory();
-  const r = hist[idx];
-  if (!r) return;
-  const [sh,sm] = startVal.split(':').map(Number);
-  const [eh,em] = endVal.split(':').map(Number);
-  const diffMin = (eh * 60 + em) - (sh * 60 + sm);
-  const h = Math.floor(diffMin / 60), m = diffMin % 60;
-  hist[idx] = { ...r, start: startVal, end: endVal, hours: h + (m/60), text: h + 'h' + m + 'm' };
-  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
-  renderHistory();
-  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
-  msg.textContent='✅ ' + r.date + ' の記録を修正したにゃ！';
-  document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
-  setTimeout(() => { msg.style.display='none'; }, 2500);
-  renderCal();
 }
 
 function adminSave() {
@@ -854,8 +716,17 @@ function unlock() {
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 }
-
 if (sessionStorage.getItem('logged_in') === 'yes') unlock();
+
+function checkPw() {
+  const v = document.getElementById('pw-input').value;
+  const err = document.getElementById('pw-error');
+  err.textContent = '';
+  if (v.length === 4) {
+    if (v === PW) { sessionStorage.setItem('logged_in','yes'); unlock(); }
+    else { err.textContent = 'パスワードが違うにゃ ✖'; document.getElementById('pw-input').value = ''; }
+  }
+}
 
 // ===== 表示 =====
 document.getElementById('today-label').textContent =
@@ -874,6 +745,87 @@ function adminTapEntry() {
     return;
   }
   _adminTapTimer = setTimeout(() => { _adminTapCount = 0; }, 3000);
+}
+
+// ===== カレンダー =====
+let calYear, calMonth;
+
+function initCal() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCal();
+}
+
+function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); }
+function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal(); }
+
+function renderCal() {
+  const label = document.getElementById('cal-month-label');
+  const grid  = document.getElementById('cal-grid');
+  if (!label || !grid) return;
+  label.textContent = calYear + '年' + (calMonth+1) + '月';
+  const hist = getHistory();
+  const histMap = {};
+  hist.forEach((r,i) => { histMap[r.date] = i; });
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  let cells = '';
+  for (let i=0; i<firstDay; i++) cells += '<div></div>';
+  for (let day=1; day<=lastDate; day++) {
+    const dateKey = (calMonth+1)+'/'+day;
+    const hasRec  = histMap[dateKey] !== undefined;
+    const isToday = (calYear===today.getFullYear() && calMonth===today.getMonth() && day===today.getDate());
+    const dow = new Date(calYear, calMonth, day).getDay();
+    const bg   = isToday ? '#ff9f43' : hasRec ? '#2e7d0e' : '#2a1f18';
+    const col  = (isToday||hasRec) ? '#fff' : dow===0 ? '#e74c3c' : dow===6 ? '#3498db' : '#ba9b85';
+    const bdr  = isToday ? '2px solid #ff9f43' : hasRec ? '2px solid #2e7d0e' : '1px solid #3d2e1a';
+    const tap  = hasRec ? 'calSelectDate(\''+dateKey+'\','+histMap[dateKey]+')' : '';
+    cells += '<div onclick="'+tap+'" style="text-align:center;padding:7px 2px;border-radius:8px;background:'+bg+';color:'+col+';font-size:14px;font-weight:bold;cursor:'+(hasRec?'pointer':'default')+';border:'+bdr+';">'+day+(hasRec?'<div style="font-size:8px;">●</div>':'')+'</div>';
+  }
+  grid.innerHTML = cells;
+}
+
+function calSelectDate(dateKey, idx) {
+  const hist = getHistory();
+  const r = hist[idx];
+  if (!r) return;
+  const area = document.getElementById('hist-edit-area');
+  area.style.display = 'block';
+  area.dataset.idx = idx;
+  document.getElementById('hist-sel-date').textContent = dateKey + ' の打刻記録';
+  document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
+  document.getElementById('hist-start').value = r.start;
+  document.getElementById('hist-end').value   = r.end;
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function saveHistEdit() {
+  const area = document.getElementById('hist-edit-area');
+  const idx  = parseInt(area.dataset.idx);
+  const startVal = document.getElementById('hist-start').value;
+  const endVal   = document.getElementById('hist-end').value;
+  const msg  = document.getElementById('hist-edit-msg');
+  if (!startVal || !endVal) {
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent='開始・終業時刻を両方入力してにゃ'; return;
+  }
+  let hist = getHistory();
+  const r = hist[idx];
+  if (!r) return;
+  const [sh,sm] = startVal.split(':').map(Number);
+  const [eh,em] = endVal.split(':').map(Number);
+  const diff = (eh*60+em)-(sh*60+sm);
+  const h = Math.floor(diff/60), m = diff%60;
+  hist[idx] = {...r, start:startVal, end:endVal, hours:h+(m/60), text:h+'h'+m+'m'};
+  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
+  renderHistory();
+  renderCal();
+  document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
+  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
+  msg.textContent='✅ ' + r.date + ' の記録を修正したにゃ！';
+  setTimeout(()=>{ msg.style.display='none'; }, 2500);
 }
 
 function switchView(v) {
