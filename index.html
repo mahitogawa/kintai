@@ -100,7 +100,7 @@ label { font-size: 15px; color: #7c5a43; font-weight: bold; margin: 0 0 6px; dis
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 .stamp-label { font-size: 15px; font-weight: bold; margin: 0; }
-.stamp-time { font-size: 32px; font-weight: bold; color: #ff9f43; margin: 0; letter-spacing: 0.04em; line-height: 1; }
+.stamp-time { font-size: 38px; font-weight: bold; color: #d35400; margin: 0; letter-spacing: 0.04em; line-height: 1; }
 .work-total {
   margin-top: 10px; text-align: center; padding: 14px;
   background: #fff8f0; border-radius: 12px; border: 2px dashed #ff9f43;
@@ -220,7 +220,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
   .metric-label { color: #b8956a; } .metric-value { color: #f5ebe6; }
   .day-btn { background: #352820; border-color: #ff9f43; color: #ff9f43; }
   input[type="number"], input[type="time"], textarea, input[type="password"] { background: #352820; color: #f5ebe6; border-color: #3d3028; }
-  input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(1) saturate(3) hue-rotate(10deg); }
   .acc-toggle { background: #352820; color: #d2b48c; }
   .acc-toggle:hover { background: #453020; }
   .nav-btn { background: #1a2d40; border-color: #2a5070; color: #7ab8e8; }
@@ -426,9 +425,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
       </div>
       <div class="acc-body closed">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-          <button id="btn-clear-history" style="padding:10px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
-        </div>
         <div id="history-list" style="font-size:16px; line-height:1.9; max-height:180px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:12px;"></div>
       </div>
     </div>
@@ -525,6 +521,17 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       </div>
 
       <!-- 手動追加 -->
+      <div id="manual-add-form" style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
+        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 記録がない日を手動追加</p>
+        <label>日付（例：6/8）</label>
+        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
+        <label>開始時刻</label>
+        <input type="time" id="manual-start" style="margin-bottom:8px;">
+        <label>終業時刻</label>
+        <input type="time" id="manual-end" style="margin-bottom:12px;">
+        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
+        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
+      </div>
     </div>
 
     <div class="card">
