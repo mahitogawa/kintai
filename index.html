@@ -375,12 +375,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
       </div>
       <div class="acc-body closed">
-        <div style="display:flex; gap:10px; align-items:flex-end;">
-          <div style="flex:1;">
-            <label>今月の合計時間</label>
-            <input type="number" id="total-hours" min="0" step="0.1" placeholder="例：40" oninput="saveTotalHours()" style="margin-bottom:0;">
-          </div>
-          <button class="reset-btn" id="btn-calc-history" style="margin-bottom:0; height:49px;">履歴から集計</button>
+        <div>
+          <label>今月の合計時間</label>
+          <input type="number" id="total-hours" min="0" step="0.1" placeholder="例：40" readonly style="margin-bottom:0; background:#f0ebe4; color:#7c5a43;">
         </div>
         <label style="margin-top:10px;">食事した回数</label>
         <input type="number" id="meals" min="0" placeholder="例：10" oninput="saveMeals()">
@@ -880,7 +877,12 @@ function calcWage() {
   document.getElementById('w-food').textContent  = m>0?'- '+fmt(food):'--';
   document.getElementById('w-total').textContent = h>0?fmt(Math.max(0,base+bonus-food)):'-- 円';
 }
-function saveTotalHours() { localStorage.setItem(window._prefix+'total_hours', document.getElementById('total-hours').value); calcWage(); }
+function autoCalcHours() {
+  const sum = getHistory().reduce((a,r) => a + r.hours, 0);
+  document.getElementById('total-hours').value = sum.toFixed(1);
+  localStorage.setItem(window._prefix+'total_hours', sum.toFixed(1));
+  calcWage();
+}
 function saveMeals() {
   localStorage.setItem(window._prefix+'meals', document.getElementById('meals').value);
   localStorage.setItem(window._prefix+'food_price', document.getElementById('food-unit-price').value);
@@ -1024,6 +1026,7 @@ function saveToHistory() {
   hist.push({date:label, start:hhmm(new Date(window._startMs)), end:hhmm(new Date(window._endMs)), hours:h+(m/60), text:h+'h'+m+'m'});
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
   renderHistory();
+  autoCalcHours();
   // クラウドに同期
   syncToCloud({ history: hist });
 }
@@ -1048,10 +1051,8 @@ const btnClearHistory = document.getElementById('btn-clear-history');
 if (btnClearHistory) btnClearHistory.onclick=()=>{
   if (confirm('本当に今月の履歴をすべて消去してもよろしいですか？')) { localStorage.removeItem(window._KEY_HISTORY); renderHistory(); }
 };
-document.getElementById('btn-calc-history').onclick=()=>{
-  const sum=getHistory().reduce((a,r)=>a+r.hours,0);
-  document.getElementById('total-hours').value=sum.toFixed(1); saveTotalHours();
-};
+// 履歴追加時も自動再集計
+
 
 // ===== 起動時復元 =====
 initFields();
@@ -1080,6 +1081,7 @@ if (localStorage.getItem(window._KEY_SUBMIT)==='yes') {
   document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
 } else { checkReady(); }
 
+autoCalcHours();
 document.getElementById('memo').value          = localStorage.getItem(todayStr+'_memo')||'';
 document.getElementById('staff-memo').value    = localStorage.getItem(window._prefix+'staff_memo')||'';
 document.getElementById('schedule-memo').value = localStorage.getItem(window._prefix+'schedule_memo')||'';
