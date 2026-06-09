@@ -484,6 +484,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
       </div>
 
+      <!-- 今日の修正 -->
       <label>開始時刻を修正（例：09:00）</label>
       <input type="time" id="admin-start" style="margin-bottom:10px;">
       <label>終業時刻を修正（例：17:00）</label>
@@ -492,6 +493,32 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <i class="ti ti-check" style="margin-right:6px;"></i>修正を保存するにゃ
       </button>
       <div id="admin-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; background:#EAF3DE; color:#1a4008; font-size:15px; font-weight:bold; text-align:center;"></div>
+    </div>
+
+    <!-- 過去の打刻修正 -->
+    <div class="card">
+      <p class="sec-label">📅 過去の打刻を修正する</p>
+      <p style="font-size:13px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">履歴から日付を選んで修正できるにゃ</p>
+
+      <label>日付を選ぶ</label>
+      <select id="hist-date-sel" style="margin-bottom:12px;" onchange="loadHistDate()">
+        <option value="">--- 選択してにゃ ---</option>
+      </select>
+
+      <div id="hist-edit-area" style="display:none;">
+        <div style="background:#2a1f18; border-radius:10px; padding:12px; margin-bottom:12px; text-align:center;">
+          <span style="font-size:13px; color:#ba9b85;">記録中の打刻：</span>
+          <span id="hist-cur-disp" style="font-size:18px; font-weight:bold; color:#ff9f43; margin-left:8px;"></span>
+        </div>
+        <label>開始時刻を修正（例：09:00）</label>
+        <input type="time" id="hist-start" style="margin-bottom:10px;">
+        <label>終業時刻を修正（例：17:00）</label>
+        <input type="time" id="hist-end" style="margin-bottom:16px;">
+        <button onclick="saveHistEdit()" style="width:100%; padding:16px; border-radius:12px; border:none; background:#2e7d0e; color:#fff; font-size:16px; font-weight:bold; cursor:pointer;">
+          <i class="ti ti-check" style="margin-right:6px;"></i>過去の記録を修正するにゃ
+        </button>
+        <div id="hist-edit-msg" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:15px; font-weight:bold; text-align:center;"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -628,6 +655,59 @@ function adminClearStamp() {
   if (msg) { msg.style.display='block'; msg.style.background='#fdecea'; msg.style.color='#7f1d1d'; msg.textContent='✅ 打刻をクリアしたにゃ！'; setTimeout(()=>msg.style.display='none',2000); }
 }
 
+function loadHistoryToSelect() {
+  const sel = document.getElementById('hist-date-sel');
+  if (!sel) return;
+  const hist = getHistory();
+  sel.innerHTML = '<option value="">--- 選択してにゃ ---</option>';
+  hist.forEach((r, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = r.date + '（' + r.start + ' 〜 ' + r.end + '）';
+    sel.appendChild(opt);
+  });
+}
+
+function loadHistDate() {
+  const sel = document.getElementById('hist-date-sel');
+  const idx = sel.value;
+  const area = document.getElementById('hist-edit-area');
+  if (idx === '') { area.style.display = 'none'; return; }
+  const hist = getHistory();
+  const r = hist[parseInt(idx)];
+  if (!r) return;
+  area.style.display = 'block';
+  document.getElementById('hist-cur-disp').textContent = r.start + ' → ' + r.end;
+  document.getElementById('hist-start').value = r.start;
+  document.getElementById('hist-end').value = r.end;
+}
+
+function saveHistEdit() {
+  const sel = document.getElementById('hist-date-sel');
+  const idx = parseInt(sel.value);
+  const startVal = document.getElementById('hist-start').value;
+  const endVal   = document.getElementById('hist-end').value;
+  const msg = document.getElementById('hist-edit-msg');
+  if (!startVal || !endVal) {
+    msg.style.display='block'; msg.style.background='#FAEEDA'; msg.style.color='#633806';
+    msg.textContent='開始・終業時刻を両方入力してにゃ'; return;
+  }
+  let hist = getHistory();
+  const r = hist[idx];
+  if (!r) return;
+  const [sh,sm] = startVal.split(':').map(Number);
+  const [eh,em] = endVal.split(':').map(Number);
+  const diffMin = (eh * 60 + em) - (sh * 60 + sm);
+  const h = Math.floor(diffMin / 60), m = diffMin % 60;
+  hist[idx] = { ...r, start: startVal, end: endVal, hours: h + (m/60), text: h + 'h' + m + 'm' };
+  localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
+  renderHistory();
+  msg.style.display='block'; msg.style.background='#EAF3DE'; msg.style.color='#1a4008';
+  msg.textContent='✅ ' + r.date + ' の記録を修正したにゃ！';
+  document.getElementById('hist-cur-disp').textContent = startVal + ' → ' + endVal;
+  setTimeout(() => { msg.style.display='none'; }, 2500);
+}
+
 function adminSave() {
   const startVal = document.getElementById('admin-start').value;
   const endVal   = document.getElementById('admin-end').value;
@@ -740,7 +820,7 @@ function adminTapEntry() {
 }
 
 function switchView(v) {
-  if (v === 'admin') adminUpdateCurrentDisplay();
+  if (v === 'admin') { adminUpdateCurrentDisplay(); loadHistoryToSelect(); }
   document.getElementById('view-main').style.display  = v==='main' ?'block':'none';
   document.getElementById('view-sub').style.display   = v==='sub'  ?'block':'none';
   document.getElementById('view-admin').style.display = v==='admin'?'block':'none';
