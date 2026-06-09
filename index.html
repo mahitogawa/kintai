@@ -425,6 +425,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
       </div>
       <div class="acc-body closed">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+          <button id="btn-clear-history" style="padding:10px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
+        </div>
         <div id="history-list" style="font-size:16px; line-height:1.9; max-height:180px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:12px;"></div>
       </div>
     </div>
@@ -583,6 +586,7 @@ function submitFromSub() {
     const btn = document.getElementById('reg-btn');
     if (btn) { btn.disabled = true; btn.textContent = '登録完了にゃ！'; }
     showPaws(document.querySelector('[onclick="submitFromSub()"]'));
+    syncToGAS();
     document.getElementById('paw-area').innerHTML = '';
     const msg = document.getElementById('sub-reg-msg');
     msg.style.display = 'block';
@@ -829,6 +833,7 @@ function submitToday() {
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
     showPaws(btn);
+    syncToGAS();
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
 }
@@ -1048,6 +1053,33 @@ function copyAll() {
 
 // ===== 履歴 =====
 // ===== Cloudflare Workers KV 連携 =====
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6WIqrDl9UR1rSay22msXGJv1rRQu3VdcEsAD7lh-t8-VtilV2TalRZC166amNrWuA/exec';
+
+async function syncToGAS() {
+  try {
+    const hist = getHistory();
+    const today = hist[hist.length - 1] || {};
+    const data = {
+      date:        today.date || '',
+      start:       today.start || '',
+      end:         today.end || '',
+      hours:       today.text || '',
+      mood:        window._selectedMood || '',
+      memo:        localStorage.getItem(todayStr+'_memo') || '',
+      staffMemo:   localStorage.getItem(window._prefix+'staff_memo') || '',
+      saturdayRec: localStorage.getItem(window._prefix+'saturday_rec') || '',
+    };
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(err) {
+    console.log('GAS送信エラー:', err);
+  }
+}
+
 const KINTAI_WORKER = 'https://kintai.mahito-ai.workers.dev';
 
 async function syncToCloud(data) {
