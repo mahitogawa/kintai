@@ -767,7 +767,10 @@ function renderCal() {
   label.textContent = calYear + '年' + (calMonth+1) + '月';
   const hist = getHistory();
   const histMap = {};
-  hist.forEach((r,i) => { histMap[r.date] = i; });
+  hist.forEach((r,i) => {
+    // r.dateは "6/8" 形式、カレンダー表示年月と照合
+    histMap[r.date] = i;
+  });
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const lastDate = new Date(calYear, calMonth+1, 0).getDate();
   const today = new Date();
@@ -1067,7 +1070,8 @@ function copyAll() {
 function getHistory() { return JSON.parse(localStorage.getItem(window._KEY_HISTORY)||'[]'); }
 function saveToHistory() {
   let hist=getHistory();
-  const label=(d.getMonth()+1)+'/'+d.getDate();
+  const now=new Date();
+  const label=(now.getMonth()+1)+'/'+now.getDate();
   if (hist.some(r=>r.date===label)) return;
   const diff=window._endMs-window._startMs;
   const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
