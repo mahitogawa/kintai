@@ -181,6 +181,18 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 .jumping-paw:nth-child(2){animation-delay:.1s} .jumping-paw:nth-child(3){animation-delay:.2s}
 .jumping-paw:nth-child(4){animation-delay:.3s} .jumping-paw:nth-child(5){animation-delay:.4s}
 
+@keyframes pawFloat {
+  0%   { opacity:1; transform: translate(0,0) scale(1) rotate(0deg); }
+  100% { opacity:0; transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(var(--tr)); }
+}
+.paw-particle {
+  position: fixed;
+  font-size: 28px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: pawFloat 0.9s ease-out forwards;
+}
+
 /* ===== ヘッダーバー ===== */
 .app-header {
   background: #fff; border-bottom: 1px solid #e8ddd0;
@@ -573,6 +585,7 @@ function submitFromSub() {
     saveToHistory(); addDay(1);
     const btn = document.getElementById('reg-btn');
     if (btn) { btn.disabled = true; btn.textContent = '登録完了にゃ！'; }
+    showPaws(document.querySelector('[onclick="submitFromSub()"]'));
     document.getElementById('paw-area').innerHTML = '';
     const msg = document.getElementById('sub-reg-msg');
     msg.style.display = 'block';
@@ -792,8 +805,8 @@ function lockBtn(id) { const b=document.getElementById(id); b.disabled=true; b.t
 
 function stamp(type) {
   const now = new Date();
-  if (type==='start') { window._startMs=now.getTime(); document.getElementById('start-disp').textContent=hhmm(now); lockBtn('start-btn'); document.getElementById('end-btn').disabled=false; }
-  else                { window._endMs  =now.getTime(); document.getElementById('end-disp').textContent  =hhmm(now); lockBtn('end-btn');   }
+  if (type==='start') { window._startMs=now.getTime(); document.getElementById('start-disp').textContent=hhmm(now); lockBtn('start-btn'); document.getElementById('end-btn').disabled=false; showPaws(document.getElementById('start-btn')); }
+  else                { window._endMs  =now.getTime(); document.getElementById('end-disp').textContent  =hhmm(now); lockBtn('end-btn'); showPaws(document.getElementById('end-btn')); }
   localStorage.setItem(window._KEY_STAMP, JSON.stringify({startMs:window._startMs, endMs:window._endMs}));
   if (window._startMs && window._endMs && window._endMs>window._startMs) showWorkHours();
   checkReady();
@@ -818,6 +831,7 @@ function submitToday() {
     localStorage.setItem(window._KEY_SUBMIT,'yes');
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
+    showPaws(btn);
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
 }
@@ -892,6 +906,27 @@ function autoCalcHours() {
   updateSeikinn();
   calcWage();
 }
+function showPaws(el) {
+  const rect = el ? el.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < 8; i++) {
+    const paw = document.createElement('span');
+    paw.className = 'paw-particle';
+    paw.textContent = '🐾';
+    const angle = (Math.random() * 360) * Math.PI / 180;
+    const dist = 60 + Math.random() * 80;
+    paw.style.left = cx + 'px';
+    paw.style.top  = cy + 'px';
+    paw.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    paw.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    paw.style.setProperty('--tr', (Math.random()*60-30) + 'deg');
+    paw.style.animationDelay = (i * 0.07) + 's';
+    document.body.appendChild(paw);
+    setTimeout(() => paw.remove(), 1200);
+  }
+}
+
 function downloadCSV() {
   const hist = getHistory();
   if (!hist.length) { alert('まだ履歴がないにゃ'); return; }
