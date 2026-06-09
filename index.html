@@ -850,12 +850,12 @@ function checkPw() {
   }
 }
 
-if (sessionStorage.getItem('logged_in') === 'yes') unlock();
-
 function unlock() {
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 }
+
+if (sessionStorage.getItem('logged_in') === 'yes') unlock();
 
 // ===== 表示 =====
 document.getElementById('today-label').textContent =
