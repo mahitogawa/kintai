@@ -360,6 +360,21 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       </div>
     </div>
 
+    <!-- チャット広場 -->
+    <div class="card">
+      <div class="acc-header">
+        <p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meet</p>
+        <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
+      </div>
+      <div class="acc-body closed">
+        <label>お休みメモ</label>
+        <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
+        <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn" style="margin-bottom:8px;">
+          <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加する
+        </a>
+      </div>
+    </div>
+
     <!-- 工賃計算 -->
     <div class="card">
       <div class="acc-header">
@@ -402,24 +417,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
           <button id="btn-clear-history" style="padding:10px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
         </div>
         <div id="history-list" style="font-size:16px; line-height:1.9; max-height:180px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:12px;"></div>
-      </div>
-    </div>
-
-    <!-- チャット広場 -->
-    <div class="card">
-      <div class="acc-header">
-        <p class="sec-label"><i class="ti ti-message-circle"></i> チャット広場 / Meet</p>
-        <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
-      </div>
-      <div class="acc-body closed">
-        <label>お休みメモ</label>
-        <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
-        <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn" style="margin-bottom:8px;">
-          <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加する
-        </a>
-        
-        
-        
       </div>
     </div>
 
