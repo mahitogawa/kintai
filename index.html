@@ -393,6 +393,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
           <p class="total-label">手取り工賃（食費引き後）</p>
           <p class="total-value" id="w-total">-- 円</p>
         </div>
+        <button onclick="downloadCSV()" style="width:100%;margin-top:14px;padding:14px;border-radius:12px;border:none;background:#2c6e8a;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">
+          📥 今月の勤務データをCSV保存するにゃ
+        </button>
       </div>
     </div>
 
@@ -892,6 +895,22 @@ function autoCalcHours() {
   updateSeikinn();
   calcWage();
 }
+function downloadCSV() {
+  const hist = getHistory();
+  if (!hist.length) { alert('まだ履歴がないにゃ'); return; }
+  const now = new Date();
+  const ym = now.getFullYear() + '年' + (now.getMonth()+1) + '月';
+  let csv = '\uFEFF日付,開始,終業,勤務時間,体調\n';
+  hist.forEach(r => {
+    csv += [r.date, r.start, r.end, r.text, r.mood||''].join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '勤務記録_' + ym + '.csv';
+  a.click();
+}
+
 function saveMeals() {
   localStorage.setItem(window._prefix+'meals', document.getElementById('meals').value);
   localStorage.setItem(window._prefix+'food_price', document.getElementById('food-unit-price').value);
