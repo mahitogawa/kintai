@@ -560,12 +560,12 @@ function initAccordion() {
 
 // ===== サブ画面から登録 =====
 function submitFromSub() {
-  if (!window._selectedMood || !window._startMs || !window._endMs) {
+  if (!window._startMs || !window._endMs) {
     const msg = document.getElementById('sub-reg-msg');
     msg.style.display = 'block';
     msg.style.background = '#FAEEDA';
     msg.style.color = '#633806';
-    msg.textContent = '体調の選択とOPEN・CLOSE打刻をすべて終わらせてにゃ';
+    msg.textContent = 'OPEN・CLOSE打刻をすべて終わらせてにゃ';
     return;
   }
   if (confirm('今日のデータを登録してもよろしいですか？')) {
@@ -807,12 +807,12 @@ function showWorkHours() {
 
 function checkReady() {
   if (localStorage.getItem(window._KEY_SUBMIT)==='yes') return;
-  document.getElementById('reg-btn').disabled = !(window._selectedMood && window._startMs && window._endMs);
+  document.getElementById('reg-btn').disabled = !(window._startMs && window._endMs);
 }
 
 function submitToday() {
-  if (!window._selectedMood||!window._startMs||!window._endMs) {
-    alert('体調の選択とOPEN・CLOSE打刻をすべて終わらせてにゃ'); return;
+  if (!window._startMs||!window._endMs) {
+    alert('OPEN・CLOSE打刻をすべて終わらせてにゃ'); return;
   }
   if (confirm('今日の体調と打刻データを登録してもよろしいですか？')) {
     localStorage.setItem(window._KEY_SUBMIT,'yes');
