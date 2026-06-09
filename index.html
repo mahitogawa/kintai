@@ -988,16 +988,44 @@ function copyAll() {
 }
 
 // ===== 履歴 =====
+// ===== Cloudflare Workers KV 連携 =====
+const KINTAI_WORKER = 'https://kintai.mahito-ai.workers.dev';
+
+async function syncToCloud(data) {
+  try {
+    await fetch(KINTAI_WORKER + '?user=mahito', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.log('クラウド同期エラー:', e); }
+}
+
+async function loadFromCloud() {
+  try {
+    const res = await fetch(KINTAI_WORKER + '?user=mahito');
+    const data = await res.json();
+    if (data && data.history && data.history.length > 0) {
+      localStorage.setItem(window._KEY_HISTORY, JSON.stringify(data.history));
+      renderHistory();
+      renderCal();
+    }
+  } catch(e) { console.log('クラウド読み込みエラー:', e); }
+}
+
 function getHistory() { return JSON.parse(localStorage.getItem(window._KEY_HISTORY)||'[]'); }
 function saveToHistory() {
   let hist=getHistory();
-  const label=(d.getMonth()+1)+'/'+d.getDate();
+  const now2=new Date();
+  const label=(now2.getMonth()+1)+'/'+now2.getDate();
   if (hist.some(r=>r.date===label)) return;
   const diff=window._endMs-window._startMs;
   const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
   hist.push({date:label, start:hhmm(new Date(window._startMs)), end:hhmm(new Date(window._endMs)), hours:h+(m/60), text:h+'h'+m+'m'});
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
   renderHistory();
+  // クラウドに同期
+  syncToCloud({ history: hist });
 }
 function renderHistory() {
   const box=document.getElementById('history-list'), hist=getHistory();
@@ -1228,6 +1256,8 @@ function saveHistEdit() {
   msg.textContent='✅ '+dateLabel+' の記録を保存したにゃ！';
   setTimeout(function(){ msg.style.display='none'; area.style.display='none'; }, 2000);
 }
+// クラウドからデータ読み込み
+loadFromCloud();
 </script>
 </body>
 </html>
