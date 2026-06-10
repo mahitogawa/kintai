@@ -488,20 +488,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
       <p style="font-size:14px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">打刻時刻の修正ができるにゃ</p>
 
-      <!-- 現在の打刻状況 -->
-      <div id="admin-current" style="background:#2a1f18; border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">開始時刻</div>
-          <div id="admin-cur-start" style="font-size:22px; font-weight:bold; color:#ff9f43;">--:--</div>
-        </div>
-        <div style="color:#ba9b85; font-size:20px;">→</div>
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">終業時刻</div>
-          <div id="admin-cur-end" style="font-size:22px; font-weight:bold; color:#e74c3c;">--:--</div>
-        </div>
-        <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
-      </div>
-
     </div>
 
     <!-- 過去の打刻修正 -->
@@ -520,12 +506,12 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div id="hist-edit-area" style="display:none;border-top:1px solid #3d2e1a;padding-top:14px;margin-bottom:14px;">
         <div style="background:#2a1f18;border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;">
           <div id="hist-sel-date" style="font-size:13px;color:#ba9b85;margin-bottom:4px;"></div>
-          <span id="hist-cur-disp" style="font-size:20px;font-weight:bold;color:#ff9f43;"></span>
+          <span id="hist-cur-disp" style="font-size:28px;font-weight:bold;color:#ff9f43;"></span>
         </div>
-        <label>開始時刻を修正（例：09:00）</label>
-        <input type="time" id="hist-start" style="margin-bottom:10px;">
-        <label>終業時刻を修正（例：17:00）</label>
-        <input type="time" id="hist-end" style="margin-bottom:16px;">
+        <label style="font-size:17px;">開始時刻を修正（例：09:00）</label>
+        <input type="time" id="hist-start" style="margin-bottom:10px; font-size:24px; padding:14px;">
+        <label style="font-size:17px;">終業時刻を修正（例：17:00）</label>
+        <input type="time" id="hist-end" style="margin-bottom:16px; font-size:24px; padding:14px;">
         <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✓ 過去の記録を修正するにゃ</button>
         <button onclick="deleteHistEntry()" id="btn-delete-hist" style="width:100%;padding:16px;border-radius:12px;border:none;background:#c0392b;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">🗑 この日の記録を削除するにゃ</button>
         <div id="hist-edit-msg" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;text-align:center;"></div>
