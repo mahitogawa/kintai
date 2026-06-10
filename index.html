@@ -297,12 +297,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 
     <!-- 登録ボタン -->
     <div style="margin-bottom:10px;">
-      <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
-        <span style="font-size:14px; color:#ba9b85; font-weight:bold;">☁️ クラウドに送信する</span>
-        <div id="cloud-toggle-btn" onclick="toggleCloud()" style="width:52px; height:28px; border-radius:28px; background:#2e7d0e; cursor:pointer; position:relative; transition:background 0.3s;">
-          <div id="cloud-toggle-dot" style="width:22px; height:22px; background:#fff; border-radius:50%; position:absolute; top:3px; left:27px; transition:left 0.3s;"></div>
-        </div>
-      </div>
       <button class="register-btn" id="reg-btn" onclick="submitToday()" disabled>
         <i class="ti ti-paw"></i> 今日のデータを登録するにゃ！
       </button>
@@ -431,9 +425,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
       </div>
       <div class="acc-body closed">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-          <button id="btn-clear-history" style="padding:10px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
-        </div>
         <div id="history-list" style="font-size:16px; line-height:1.9; max-height:180px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:12px;"></div>
       </div>
     </div>
@@ -486,6 +477,20 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
       <p style="font-size:14px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">打刻時刻の修正ができるにゃ</p>
 
+      <!-- 現在の打刻状況 -->
+      <div id="admin-current" style="background:#2a1f18; border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="text-align:center; flex:1;">
+          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">開始時刻</div>
+          <div id="admin-cur-start" style="font-size:22px; font-weight:bold; color:#ff9f43;">--:--</div>
+        </div>
+        <div style="color:#ba9b85; font-size:20px;">→</div>
+        <div style="text-align:center; flex:1;">
+          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">終業時刻</div>
+          <div id="admin-cur-end" style="font-size:22px; font-weight:bold; color:#e74c3c;">--:--</div>
+        </div>
+        <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
+      </div>
+
     </div>
 
     <!-- 過去の打刻修正 -->
@@ -504,15 +509,28 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div id="hist-edit-area" style="display:none;border-top:1px solid #3d2e1a;padding-top:14px;margin-bottom:14px;">
         <div style="background:#2a1f18;border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;">
           <div id="hist-sel-date" style="font-size:13px;color:#ba9b85;margin-bottom:4px;"></div>
-          <span id="hist-cur-disp" style="font-size:28px;font-weight:bold;color:#ff9f43;"></span>
+          <span id="hist-cur-disp" style="font-size:20px;font-weight:bold;color:#ff9f43;"></span>
         </div>
-        <label style="font-size:17px;">開始時刻を修正（例：09:00）</label>
-        <input type="time" id="hist-start" style="margin-bottom:10px; font-size:24px; padding:14px;">
-        <label style="font-size:17px;">終業時刻を修正（例：17:00）</label>
-        <input type="time" id="hist-end" style="margin-bottom:16px; font-size:24px; padding:14px;">
+        <label>開始時刻を修正（例：09:00）</label>
+        <input type="time" id="hist-start" style="margin-bottom:10px;">
+        <label>終業時刻を修正（例：17:00）</label>
+        <input type="time" id="hist-end" style="margin-bottom:16px;">
         <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✓ 過去の記録を修正するにゃ</button>
         <button onclick="deleteHistEntry()" id="btn-delete-hist" style="width:100%;padding:16px;border-radius:12px;border:none;background:#c0392b;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">🗑 この日の記録を削除するにゃ</button>
         <div id="hist-edit-msg" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;text-align:center;"></div>
+      </div>
+
+      <!-- 手動追加 -->
+      <div id="manual-add-form" style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
+        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 記録がない日を手動追加</p>
+        <label>日付（例：6/8）</label>
+        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
+        <label>開始時刻</label>
+        <input type="time" id="manual-start" style="margin-bottom:8px;">
+        <label>終業時刻</label>
+        <input type="time" id="manual-end" style="margin-bottom:12px;">
+        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
+        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
       </div>
     </div>
 
@@ -811,8 +829,6 @@ function submitToday() {
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
     showPaws(btn);
-    const cloudOn = window._cloudOn;
-    if (cloudOn) { syncToCloud({ history: getHistory() }); syncToGAS(); }
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
 }
@@ -905,21 +921,6 @@ function showPaws(el) {
     paw.style.animationDelay = (i * 0.07) + 's';
     document.body.appendChild(paw);
     setTimeout(() => paw.remove(), 1200);
-  }
-}
-
-// ===== クラウドトグル =====
-window._cloudOn = true;
-function toggleCloud() {
-  window._cloudOn = !window._cloudOn;
-  const btn = document.getElementById('cloud-toggle-btn');
-  const dot = document.getElementById('cloud-toggle-dot');
-  if (window._cloudOn) {
-    btn.style.background = '#2e7d0e';
-    dot.style.left = '27px';
-  } else {
-    btn.style.background = '#c0392b';
-    dot.style.left = '3px';
   }
 }
 
