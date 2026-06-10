@@ -297,6 +297,14 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 
     <!-- 登録ボタン -->
     <div style="margin-bottom:10px;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
+        <span style="font-size:14px; color:#ba9b85; font-weight:bold;">☁️ クラウドに送信する</span>
+        <label style="position:relative; display:inline-block; width:48px; height:26px;">
+          <input type="checkbox" id="cloud-toggle" checked style="opacity:0; width:0; height:0;">
+          <span onclick="document.getElementById('cloud-toggle').click()" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#2e7d0e; border-radius:26px; transition:.3s;"></span>
+          <span id="cloud-toggle-dot" style="position:absolute; content:''; height:20px; width:20px; left:4px; bottom:3px; background:white; border-radius:50%; transition:.3s; pointer-events:none;"></span>
+        </label>
+      </div>
       <button class="register-btn" id="reg-btn" onclick="submitToday()" disabled>
         <i class="ti ti-paw"></i> 今日のデータを登録するにゃ！
       </button>
@@ -521,19 +529,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <button onclick="saveHistEdit()" style="width:100%;padding:16px;border-radius:12px;border:none;background:#2e7d0e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✓ 過去の記録を修正するにゃ</button>
         <button onclick="deleteHistEntry()" id="btn-delete-hist" style="width:100%;padding:16px;border-radius:12px;border:none;background:#c0392b;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;">🗑 この日の記録を削除するにゃ</button>
         <div id="hist-edit-msg" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;text-align:center;"></div>
-      </div>
-
-      <!-- 手動追加 -->
-      <div id="manual-add-form" style="border-top:1px solid #3d2e1a;padding-top:14px;margin-top:4px;">
-        <p style="font-size:13px;font-weight:bold;color:#ff9f43;margin:0 0 10px;">📝 記録がない日を手動追加</p>
-        <label>日付（例：6/8）</label>
-        <input type="text" id="manual-date" placeholder="6/8" style="margin-bottom:8px;">
-        <label>開始時刻</label>
-        <input type="time" id="manual-start" style="margin-bottom:8px;">
-        <label>終業時刻</label>
-        <input type="time" id="manual-end" style="margin-bottom:12px;">
-        <button onclick="addManualHistory()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#d35400;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;">➕ 手動で追加するにゃ</button>
-        <div id="manual-msg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:14px;font-weight:bold;text-align:center;"></div>
       </div>
     </div>
 
@@ -832,6 +827,8 @@ function submitToday() {
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
     showPaws(btn);
+    const cloudOn = document.getElementById('cloud-toggle').checked;
+    if (cloudOn) { syncToCloud({ history: getHistory() }); syncToGAS(); }
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
 }
@@ -910,7 +907,7 @@ function showPaws(el) {
   const rect = el ? el.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 8; i++) {
     const paw = document.createElement('span');
     paw.className = 'paw-particle';
     paw.textContent = '🐾';
@@ -926,6 +923,19 @@ function showPaws(el) {
     setTimeout(() => paw.remove(), 1200);
   }
 }
+
+// ===== クラウドトグル =====
+document.getElementById('cloud-toggle').addEventListener('change', function() {
+  const dot = document.getElementById('cloud-toggle-dot');
+  const span = dot.previousElementSibling;
+  if (this.checked) {
+    dot.style.left = '24px';
+    span.style.background = '#2e7d0e';
+  } else {
+    dot.style.left = '4px';
+    span.style.background = '#aaa';
+  }
+});
 
 function downloadCSV() {
   const hist = getHistory();
