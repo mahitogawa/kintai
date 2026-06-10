@@ -299,11 +299,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     <div style="margin-bottom:10px;">
       <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
         <span style="font-size:14px; color:#ba9b85; font-weight:bold;">☁️ クラウドに送信する</span>
-        <label style="position:relative; display:inline-block; width:48px; height:26px;">
-          <input type="checkbox" id="cloud-toggle" checked style="opacity:0; width:0; height:0;">
-          <span onclick="document.getElementById('cloud-toggle').click()" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#2e7d0e; border-radius:26px; transition:.3s;"></span>
-          <span id="cloud-toggle-dot" style="position:absolute; content:''; height:20px; width:20px; left:4px; bottom:3px; background:white; border-radius:50%; transition:.3s; pointer-events:none;"></span>
-        </label>
+        <div id="cloud-toggle-btn" onclick="toggleCloud()" style="width:52px; height:28px; border-radius:28px; background:#2e7d0e; cursor:pointer; position:relative; transition:background 0.3s;">
+          <div id="cloud-toggle-dot" style="width:22px; height:22px; background:#fff; border-radius:50%; position:absolute; top:3px; left:27px; transition:left 0.3s;"></div>
+        </div>
       </div>
       <button class="register-btn" id="reg-btn" onclick="submitToday()" disabled>
         <i class="ti ti-paw"></i> 今日のデータを登録するにゃ！
@@ -813,7 +811,7 @@ function submitToday() {
     saveToHistory(); addDay(1);
     const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
     showPaws(btn);
-    const cloudOn = document.getElementById('cloud-toggle').checked;
+    const cloudOn = window._cloudOn;
     if (cloudOn) { syncToCloud({ history: getHistory() }); syncToGAS(); }
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
   }
@@ -911,17 +909,19 @@ function showPaws(el) {
 }
 
 // ===== クラウドトグル =====
-document.getElementById('cloud-toggle').addEventListener('change', function() {
+window._cloudOn = true;
+function toggleCloud() {
+  window._cloudOn = !window._cloudOn;
+  const btn = document.getElementById('cloud-toggle-btn');
   const dot = document.getElementById('cloud-toggle-dot');
-  const span = dot.previousElementSibling;
-  if (this.checked) {
-    dot.style.left = '24px';
-    span.style.background = '#2e7d0e';
+  if (window._cloudOn) {
+    btn.style.background = '#2e7d0e';
+    dot.style.left = '27px';
   } else {
-    dot.style.left = '4px';
-    span.style.background = '#aaa';
+    btn.style.background = '#c0392b';
+    dot.style.left = '3px';
   }
-});
+}
 
 function downloadCSV() {
   const hist = getHistory();
