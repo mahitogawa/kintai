@@ -46,17 +46,17 @@ label { font-size: 15px; color: #7c5a43; font-weight: bold; margin: 0 0 6px; dis
 
 .register-btn {
   width: 100%; padding: 18px; border-radius: 14px;
-  border: none; background: #2e7d0e; color: #fff;
+  border: 2px solid #c9a84c; background: #2e7d0e; color: #fff;
   font-size: 18px; font-weight: bold; cursor: pointer;
   letter-spacing: 0.03em; box-shadow: 0 3px 10px rgba(46,125,14,0.3);
   transition: opacity 0.15s;
 }
-.register-btn:disabled { background: #b8c8b0; box-shadow: none; cursor: default; }
+.register-btn:disabled { background: #b8c8b0; border-color: #c9a84c; box-shadow: none; cursor: default; }
 .register-btn:active:not(:disabled) { opacity: 0.85; }
 
 .nav-btn {
   display: block; width: 100%; padding: 16px;
-  border-radius: 14px; border: 2px solid #b5d4f4;
+  border-radius: 14px; border: 2px solid #c9a84c;
   background: #e6f1fb; color: #0c447c;
   font-size: 17px; font-weight: bold; cursor: pointer;
   text-align: center; margin-bottom: 10px; text-decoration: none;
@@ -233,29 +233,17 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 <body>
 
 <!-- ロック画面 -->
-<div id="lock-screen">
-  <div class="card" style="max-width:320px; width:100%; text-align:center;">
-    <p id="tap-area" onclick="tapUnlock()" style="font-size:52px; margin:0 0 10px; cursor:pointer; user-select:none;">🐾</p>
-    <p style="font-size:18px; font-weight:bold; color:#ff9f43; margin:0 0 4px;">ワンダーワークIT池下</p>
-    <p style="font-size:14px; color:#ba9b85; font-weight:bold; margin:0 0 20px;">合言葉を入れてにゃ</p>
-    <input type="password" id="pw-input" maxlength="4" placeholder="● ● ● ●"
-      style="text-align:center; font-size:28px; letter-spacing:12px;"
-      oninput="checkPw()" onkeydown="if(event.key==='Enter')checkPw()">
-    <p id="pw-error" style="font-size:13px; color:#d35400; min-height:18px; margin:4px 0 0; font-weight:bold;"></p>
-  </div>
-</div>
+<div id="app" style="display:block;">
 
-<div id="app" style="display:none;">
+<div style="background:#c0392b; color:#fff; text-align:center; padding:14px 10px; font-size:20px; font-weight:bold;">
+  🐱 にゃんログ勤怠 【デモ版】<br>
+  <span style="font-size:13px; font-weight:normal;">※ このアプリはデモです。データは保存されません。</span>
+</div>
 
 <!-- スティッキーヘッダー -->
 <div class="app-header">
   <span class="app-header-title"> ワンダーワークIT池下</span>
   <span class="app-header-date" id="today-label"></span>
-</div>
-
-<div style="background:#c0392b; color:#fff; text-align:center; padding:14px 10px; font-size:20px; font-weight:bold;">
-  🐱 にゃんログ勤怠 【デモ版】<br>
-  <span style="font-size:13px; font-weight:normal;">※ このアプリはデモです。データは保存されません。</span>
 </div>
 
 <div class="container" style="padding-top:14px;">
@@ -264,9 +252,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
   <div id="view-main">
 
     <!-- Meet -->
-    <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
-      <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加するにゃ！
-    </a>
+    <div class="card" style="text-align:center; padding:16px;">
+      <p style="font-size:20px; font-weight:bold; color:#7ab8e8; margin:0;">✨ 今日も一歩ずつにゃ！</p>
+    </div>
 
     <!-- 体調 -->
     <div class="card">
@@ -323,18 +311,10 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <i class="ti ti-arrow-left" style="margin-right:6px;"></i>🚪 タイムカード画面に戻るにゃ
     </button>
     <!-- 通所日数（常時表示） -->
-    <div class="card">
-      <p class="sec-label"><i class="ti ti-calendar"></i> 今月の通所日数</p>
-      <div class="day-row">
-        <button class="day-btn" onclick="addDay(-1)">－</button>
-        <div style="flex:1; text-align:center;">
-          <p style="font-size:52px; font-weight:bold; color:#ff9f43; margin:0; line-height:1;" id="days-count">0</p>
-          <p style="font-size:13px; color:#7c5a43; margin:4px 0 0; font-weight:bold;">日</p>
-        </div>
-        <button class="day-btn" onclick="addDay(1)">＋</button>
-      </div>
+    <div class="card" style="text-align:center; padding:16px;">
+      <span id="days-count" style="display:none;">0</span>
       <div class="seikinn-box" id="seikinn-box">
-        <p style="font-size:14px; margin:0;" id="seikinn-msg"></p>
+        <p style="font-size:17px; margin:0; font-weight:bold;" id="seikinn-msg"></p>
       </div>
     </div>
 
@@ -386,9 +366,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div class="acc-body closed">
         <label>お休みメモ</label>
         <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
-        <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn" style="margin-bottom:8px;">
-          <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加する
-        </a>
       </div>
     </div>
 
@@ -484,21 +461,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     <div class="card">
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
       <p style="font-size:14px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">打刻時刻の修正ができるにゃ</p>
-
-      <!-- 現在の打刻状況 -->
-      <div id="admin-current" style="background:#2a1f18; border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">開始時刻</div>
-          <div id="admin-cur-start" style="font-size:22px; font-weight:bold; color:#ff9f43;">--:--</div>
-        </div>
-        <div style="color:#ba9b85; font-size:20px;">→</div>
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">終業時刻</div>
-          <div id="admin-cur-end" style="font-size:22px; font-weight:bold; color:#e74c3c;">--:--</div>
-        </div>
-        <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
-      </div>
-
     </div>
 
     <!-- 過去の打刻修正 -->
@@ -758,17 +720,8 @@ const paydateText = nm.getFullYear() !== d.getFullYear()
   : (nm.getMonth()+1)+'月20日';
 document.getElementById('w-paydate').textContent = paydateText;
 
-let _adminTapCount = 0;
-let _adminTapTimer = null;
 function adminTapEntry() {
-  _adminTapCount++;
-  clearTimeout(_adminTapTimer);
-  if (_adminTapCount >= 5) {
-    _adminTapCount = 0;
-    switchView('admin');
-    return;
-  }
-  _adminTapTimer = setTimeout(() => { _adminTapCount = 0; }, 3000);
+  switchView('admin');
 }
 
 function switchView(v) {
@@ -884,8 +837,13 @@ function resetDays() {
 }
 function updateSeikinn() {
   const box=document.getElementById('seikinn-box'), msg=document.getElementById('seikinn-msg');
-  if (window._days>=15) { box.className='seikinn-box seikinn-success'; msg.textContent='精勤手当あり！ +5,000円 🐱'; }
-  else { box.className='seikinn-box seikinn-warning'; msg.textContent='あと '+(15-window._days)+' 日で精勤手当 +5,000円 '; }
+  if (window._days>=15) {
+    box.className='seikinn-box seikinn-success';
+    msg.textContent = window._days + '日達成！精勤手当ゲットにゃ🎉 +5,000円';
+  } else {
+    box.className='seikinn-box seikinn-warning';
+    msg.textContent = window._days + '日達成！あと' + (15-window._days) + '日で精勤手当🐾';
+  }
 }
 
 // ===== 工賃計算 =====
@@ -915,7 +873,7 @@ function showPaws(el) {
   const rect = el ? el.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 8; i++) {
     const paw = document.createElement('span');
     paw.className = 'paw-particle';
     paw.textContent = '🐾';
@@ -1057,8 +1015,30 @@ function copyAll() {
 // ===== 履歴 =====
 // ===== デモ版: クラウド連携無効 =====
 async function syncToCloud(data) { console.log('デモ版: クラウド同期スキップ'); }
-async function loadFromCloud() { console.log('デモ版: クラウード読み込みスキップ'); }
+async function loadFromCloud() { console.log('デモ版: クラウド読み込みスキップ'); }
 async function syncToGAS() { console.log('デモ版: GAS送信スキップ'); }
+
+async function syncToCloud(data) {
+  try {
+    await fetch(KINTAI_WORKER + '?user=mahito', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.log('クラウド同期エラー:', e); }
+}
+
+async function loadFromCloud() {
+  try {
+    const res = await fetch(KINTAI_WORKER + '?user=mahito');
+    const data = await res.json();
+    if (data && data.history && data.history.length > 0) {
+      localStorage.setItem(window._KEY_HISTORY, JSON.stringify(data.history));
+      renderHistory();
+      renderCal();
+    }
+  } catch(e) { console.log('クラウド読み込みエラー:', e); }
+}
 
 function getHistory() { return JSON.parse(localStorage.getItem(window._KEY_HISTORY)||'[]'); }
 function saveToHistory() {

@@ -46,17 +46,17 @@ label { font-size: 15px; color: #7c5a43; font-weight: bold; margin: 0 0 6px; dis
 
 .register-btn {
   width: 100%; padding: 18px; border-radius: 14px;
-  border: none; background: #2e7d0e; color: #fff;
+  border: 2px solid #c9a84c; background: #2e7d0e; color: #fff;
   font-size: 18px; font-weight: bold; cursor: pointer;
   letter-spacing: 0.03em; box-shadow: 0 3px 10px rgba(46,125,14,0.3);
   transition: opacity 0.15s;
 }
-.register-btn:disabled { background: #b8c8b0; box-shadow: none; cursor: default; }
+.register-btn:disabled { background: #b8c8b0; border-color: #c9a84c; box-shadow: none; cursor: default; }
 .register-btn:active:not(:disabled) { opacity: 0.85; }
 
 .nav-btn {
   display: block; width: 100%; padding: 16px;
-  border-radius: 14px; border: 2px solid #b5d4f4;
+  border-radius: 14px; border: 2px solid #c9a84c;
   background: #e6f1fb; color: #0c447c;
   font-size: 17px; font-weight: bold; cursor: pointer;
   text-align: center; margin-bottom: 10px; text-decoration: none;
@@ -247,9 +247,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
   <div id="view-main">
 
     <!-- Meet -->
-    <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn">
-      <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加するにゃ！
-    </a>
+    <div class="card" style="text-align:center; padding:16px;">
+      <p style="font-size:20px; font-weight:bold; color:#7ab8e8; margin:0;">✨ 今日も一歩ずつにゃ！</p>
+    </div>
 
     <!-- 体調 -->
     <div class="card">
@@ -361,9 +361,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
       <div class="acc-body closed">
         <label>お休みメモ</label>
         <textarea id="yasumi-memo" placeholder="お休みの予定があれば入力してにゃ" style="height:70px;" oninput="saveField('yasumi_memo',this.value)"></textarea>
-        <a href="https://meet.google.com/imo-qzya-nzh" target="_blank" class="meet-btn" style="margin-bottom:8px;">
-          <i class="ti ti-video" style="margin-right:6px;"></i>Google Meetに参加する
-        </a>
       </div>
     </div>
 

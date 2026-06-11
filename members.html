@@ -46,7 +46,7 @@ body { display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; 
   border-radius: 16px;
   padding: 18px 16px;
   margin-bottom: 14px;
-  border: 1px solid var(--border);
+  border: 1.5px solid #c9a84c;
   box-shadow: var(--shadow);
 }
 
@@ -278,9 +278,6 @@ textarea { resize: none; }
       <label>備考・特記事項</label>
       <textarea id="new-memo" rows="3" placeholder="配慮事項など…"></textarea>
 
-      <label>工賃振込先</label>
-      <input type="text" id="new-bankInfo" placeholder="例：〇〇銀行 △△支店 普通 1234567 ヤマダ タロウ">
-
       <label>在籍状況</label>
       <select id="new-status">
         <option value="在籍中">在籍中</option>
@@ -376,8 +373,6 @@ textarea { resize: none; }
       </select>
       <label>備考・特記事項</label>
       <textarea id="edit-memo" rows="3"></textarea>
-      <label>工賃振込先</label>
-      <input type="text" id="edit-bankInfo">
       <label>在籍状況</label>
       <select id="edit-status">
         <option value="在籍中">在籍中</option>
@@ -441,7 +436,6 @@ function saveNew() {
     emergencyName: document.getElementById('new-emergency-name').value.trim(),
     disability:    document.getElementById('new-disability').value,
     memo:          document.getElementById('new-memo').value.trim(),
-    bankInfo:      document.getElementById('new-bankInfo').value.trim(),
     status:        document.getElementById('new-status').value,
     createdAt:     new Date().toLocaleDateString('ja-JP'),
   };
@@ -451,7 +445,7 @@ function saveNew() {
   saveMembers(list);
 
   // フォームリセット
-  ['new-name','new-kana','new-birth','new-gender','new-zip','new-addr','new-tel','new-emergency','new-emergency-name','new-disability','new-memo','new-bankInfo'].forEach(id => {
+  ['new-name','new-kana','new-birth','new-gender','new-zip','new-addr','new-tel','new-emergency','new-emergency-name','new-disability','new-memo'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = el.tagName === 'SELECT' ? '' : '';
   });
@@ -520,7 +514,6 @@ function showDetail(id) {
     ['緊急連絡先', m.emergency || '未登録'],
     ['緊急連絡先氏名', m.emergencyName || '未登録'],
     ['障害種別', m.disability || '未登録'],
-    ['工賃振込先', m.bankInfo || '未登録'],
     ['備考',     m.memo || 'なし'],
     ['登録日',   m.createdAt || '不明'],
   ];
@@ -557,7 +550,6 @@ function startEdit() {
   document.getElementById('edit-emergency-name').value = m.emergencyName || '';
   document.getElementById('edit-disability').value    = m.disability || '';
   document.getElementById('edit-memo').value          = m.memo || '';
-  document.getElementById('edit-bankInfo').value      = m.bankInfo || '';
   document.getElementById('edit-status').value        = m.status || '在籍中';
   showView('view-edit');
 }
@@ -583,7 +575,6 @@ function saveEdit() {
     emergencyName: document.getElementById('edit-emergency-name').value.trim(),
     disability:    document.getElementById('edit-disability').value,
     memo:          document.getElementById('edit-memo').value.trim(),
-    bankInfo:      document.getElementById('edit-bankInfo').value.trim(),
     status:        document.getElementById('edit-status').value,
   };
   saveMembers(list);
