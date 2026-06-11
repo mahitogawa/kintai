@@ -233,19 +233,7 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
 <body>
 
 <!-- ロック画面 -->
-<div id="lock-screen">
-  <div class="card" style="max-width:320px; width:100%; text-align:center;">
-    <p id="tap-area" onclick="tapUnlock()" style="font-size:52px; margin:0 0 10px; cursor:pointer; user-select:none;">🐾</p>
-    <p style="font-size:18px; font-weight:bold; color:#ff9f43; margin:0 0 4px;">ワンダーワークIT池下</p>
-    <p style="font-size:14px; color:#ba9b85; font-weight:bold; margin:0 0 20px;">合言葉を入れてにゃ</p>
-    <input type="password" id="pw-input" maxlength="4" placeholder="● ● ● ●"
-      style="text-align:center; font-size:28px; letter-spacing:12px;"
-      oninput="checkPw()" onkeydown="if(event.key==='Enter')checkPw()">
-    <p id="pw-error" style="font-size:13px; color:#d35400; min-height:18px; margin:4px 0 0; font-weight:bold;"></p>
-  </div>
-</div>
-
-<div id="app" style="display:none;">
+<div id="app" style="display:block;">
 
 <!-- スティッキーヘッダー -->
 <div class="app-header">
@@ -738,17 +726,8 @@ const paydateText = nm.getFullYear() !== d.getFullYear()
   : (nm.getMonth()+1)+'月20日';
 document.getElementById('w-paydate').textContent = paydateText;
 
-let _adminTapCount = 0;
-let _adminTapTimer = null;
 function adminTapEntry() {
-  _adminTapCount++;
-  clearTimeout(_adminTapTimer);
-  if (_adminTapCount >= 5) {
-    _adminTapCount = 0;
-    switchView('admin');
-    return;
-  }
-  _adminTapTimer = setTimeout(() => { _adminTapCount = 0; }, 3000);
+  switchView('admin');
 }
 
 function switchView(v) {
