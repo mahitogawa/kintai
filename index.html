@@ -425,6 +425,9 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
         <div class="acc-toggle"><span>開く</span><i class="ti ti-chevron-down acc-icon" aria-hidden="true"></i></div>
       </div>
       <div class="acc-body closed">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+          <button id="btn-clear-history" style="padding:10px 16px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:14px; font-weight:bold; cursor:pointer;">履歴を全消去</button>
+        </div>
         <div id="history-list" style="font-size:16px; line-height:1.9; max-height:180px; overflow-y:auto; background:#f7f0e8; padding:10px; border-radius:12px;"></div>
       </div>
     </div>
@@ -476,21 +479,6 @@ input:focus, textarea:focus { outline: none; border-color: #ff9f43; }
     <div class="card">
       <p class="sec-label"><i class="ti ti-shield" aria-hidden="true"></i> スタッフ管理画面</p>
       <p style="font-size:14px; color:#ba9b85; margin:0 0 12px; font-weight:bold;">打刻時刻の修正ができるにゃ</p>
-
-      <!-- 現在の打刻状況 -->
-      <div id="admin-current" style="background:#2a1f18; border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">開始時刻</div>
-          <div id="admin-cur-start" style="font-size:22px; font-weight:bold; color:#ff9f43;">--:--</div>
-        </div>
-        <div style="color:#ba9b85; font-size:20px;">→</div>
-        <div style="text-align:center; flex:1;">
-          <div style="font-size:11px; color:#ba9b85; margin-bottom:4px;">終業時刻</div>
-          <div id="admin-cur-end" style="font-size:22px; font-weight:bold; color:#e74c3c;">--:--</div>
-        </div>
-        <button onclick="adminClearStamp()" style="margin-left:12px; padding:8px 12px; border-radius:8px; border:2px solid #c0392b; background:#e74c3c; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">クリア</button>
-      </div>
-
     </div>
 
     <!-- 過去の打刻修正 -->
