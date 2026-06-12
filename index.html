@@ -783,7 +783,6 @@ function showWorkHours() {
 }
 
 function checkReady() {
-  if (localStorage.getItem(window._KEY_SUBMIT)==='yes') return;
   document.getElementById('reg-btn').disabled = !(window._startMs && window._endMs);
 }
 
@@ -791,12 +790,31 @@ function submitToday() {
   if (!window._startMs||!window._endMs) {
     alert('OPEN・CLOSE打刻をすべて終わらせてにゃ'); return;
   }
-  if (confirm('今日の体調と打刻データを登録してもよろしいですか？')) {
+  const already = localStorage.getItem(window._KEY_SUBMIT)==='yes';
+  const confirmMsg = already
+    ? '今日の打刻データを更新（再登録）しますか？'
+    : '今日の体調と打刻データを登録してもよろしいですか？';
+  if (confirm(confirmMsg)) {
+    const isNew = saveToHistory();
+    if (!already && isNew) addDay(1);
     localStorage.setItem(window._KEY_SUBMIT,'yes');
-    saveToHistory(); addDay(1);
-    const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
+    syncToGAS();
+
+    // 打刻のみリセットして再打刻できるようにする
+    window._startMs = null;
+    window._endMs   = null;
+    localStorage.removeItem(window._KEY_STAMP);
+    document.getElementById('start-disp').textContent = '--:--';
+    document.getElementById('end-disp').textContent   = '--:--';
+    document.getElementById('work-hours').textContent  = '-- 時間 -- 分';
+    const sb = document.getElementById('start-btn'); sb.disabled = false; sb.textContent = '開始時刻を打刻';
+    const eb = document.getElementById('end-btn');   eb.disabled = true;  eb.textContent = '終業時間を打刻';
+
+    const btn=document.getElementById('reg-btn');
+    btn.disabled=true; btn.textContent='✅ 登録したにゃ！（打刻し直せます）';
     showPaws(btn);
     document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
+    setTimeout(()=>{ btn.textContent='今日のデータを登録するにゃ！'; checkReady(); }, 2500);
   }
 }
 
@@ -1066,15 +1084,18 @@ function saveToHistory() {
   let hist=getHistory();
   const now2=new Date();
   const label=(now2.getMonth()+1)+'/'+now2.getDate();
-  if (hist.some(r=>r.date===label)) return;
   const diff=window._endMs-window._startMs;
   const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
-  hist.push({date:label, start:hhmm(new Date(window._startMs)), end:hhmm(new Date(window._endMs)), hours:h+(m/60), text:h+'h'+m+'m'});
+  const entry={date:label, start:hhmm(new Date(window._startMs)), end:hhmm(new Date(window._endMs)), hours:h+(m/60), text:h+'h'+m+'m'};
+  const idx = hist.findIndex(r=>r.date===label);
+  let isNew = false;
+  if (idx >= 0) { hist[idx] = entry; } else { hist.push(entry); isNew = true; }
   localStorage.setItem(window._KEY_HISTORY, JSON.stringify(hist));
   renderHistory();
   autoCalcHours();
   // クラウドに同期
   syncToCloud({ history: hist });
+  return isNew;
 }
 function renderHistory() {
   const box=document.getElementById('history-list'), hist=getHistory();
@@ -1123,8 +1144,8 @@ if (saved) {
 const savedMood=localStorage.getItem(todayStr+'_choice_mood');
 if (savedMood) { window._selectedMood=savedMood; setChoiceVisual('mood',savedMood); }
 if (localStorage.getItem(window._KEY_SUBMIT)==='yes') {
-  const btn=document.getElementById('reg-btn'); btn.disabled=true; btn.textContent='登録完了にゃ！';
-  document.getElementById('paw-area').innerHTML='<span class="jumping-paw"></span>'.repeat(5);
+  const btn=document.getElementById('reg-btn'); btn.textContent='今日のデータを登録するにゃ！';
+  checkReady();
 } else { checkReady(); }
 
 autoCalcHours();
